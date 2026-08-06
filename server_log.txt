@@ -1,0 +1,172 @@
+
+> poll-app@0.0.0 start
+> ng serve
+
+Component HMR has been enabled, see https://angular.dev/hmr for more info.
+❯ Building. Port 4200 is already in use.
+Would you like to use a different port? (Y/n)[47G
+[?25hAn unhandled exception occurred: Port 4200 is already in use. Use '--port' to specify a different port.
+See "/private/var/folders/5p/1jdwxdyn53l_gs272ybmhyzh0000gn/T/ng-DQCPTw/angular-errors.log" for further details.
+rnal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+Watch mode enabled. Watching for file changes...
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.224 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.044 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.043 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.175 seconds]
+
+✘ [ERROR] Could not resolve ""
+
+    src/styles.scss:2:8:
+      2 │ @import url();
+        ╵         ~~~~~
+
+  You can mark the path "" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.053 seconds]
+
+✘ [ERROR] Could not resolve ""
+
+    src/styles.scss:1:8:
+      1 │ @import url();
+        ╵         ~~~~~
+
+  You can mark the path "" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.037 seconds]
+
+✘ [ERROR] Could not resolve ""
+
+    src/styles.scss:2:8:
+      2 │ @import url();
+        ╵         ~~~~~
+
+  You can mark the path "" as external to exclude it from the bundle, which will remove this error and leave the unresolved path in the bundle.
+
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.031 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.151 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.044 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Application bundle generation failed. [0.086 seconds]
+
+✘ [ERROR] Angular compilation initialization failed. [plugin angular-compiler]
+
+  Error: ETIMEDOUT: connection timed out, read
+      at async readFileHandle (node:internal/fs/promises:554:24)
+      at async getSource (node:internal/modules/esm/load:42:14)
+      at async defaultLoad (node:internal/modules/esm/load:114:34)
+      at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:514:32)
+
+

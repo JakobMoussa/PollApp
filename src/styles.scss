@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Nerko+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;600;700&display=swap');
+
+$primary-purple: #35273A;
+$primary-orange: #FEB770;
+$secondary-orange: #FFCFA1;
+$bg-card: #FAF5FF;
+
+:root {
+  --primary-purple: #{$primary-purple};
+  --primary-orange: #{$primary-orange};
+  --secondary-orange: #{$secondary-orange};
+  --bg-card: #{$bg-card};
+}
+
+h1 {
+  font-family: 'Nerko One', regular;
+  font-weight: 400;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  margin: 20px;
+}
+
+button {
+  padding: 12px 16px 12px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+  border: none;
+  font-family: mulish;
+}
