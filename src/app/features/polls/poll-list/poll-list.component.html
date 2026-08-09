@@ -6,7 +6,10 @@
             <p class="hero-txt">Create and share surveys in minutes – from team events to workplace culture. Collect
                 opinions, engage
                 your audience, and turn feedback into action.</p>
-            <button class="new-survey">New survey</button>
+            <button class="new-survey">
+                <span>New survey</span>
+                <img src="/icons/add_circle_purple.svg" alt="" class="survey-icon">
+            </button>
         </div>
         <div class="hero-right">
             <img src="/images/phone-img.png" alt="Phone Screenshot" class="hero-image">
@@ -47,7 +50,31 @@
             <button class="active">Active survey</button>
             <button class="inactive">Past survey</button>
         </ul>
-        <p class="sort">Sort by categories ▾</p>
+        <div class="dropdown-wrapper">
+            <button class="sort" (click)="toggleDropdown($event)">
+                Sort by categories
+                <img [src]="isDropdownOpen ? '/icons/drop_down.svg' : '/icons/arrow_drop_down.svg'" alt="drop Down">
+            </button>
+            @if (isDropdownOpen) {
+            <div class="dropdown-menu">
+                <ul>
+                    @for (category of categories; track category) {
+                    <li (click)="selectCategory(category, $event)"
+                        [class.active-category]="category === selectedCategory">
+                        {{ category }}
+                    </li>
+                    }
+                </ul>
+            </div>
+            }
+            @if (selectedCategory && selectedCategory !== 'All Surveys') {
+            <div class="selected-category-badge">
+                <span>{{ selectedCategory }}</span>
+                <span class="remove-category" (click)="selectCategory('All Surveys', $event)"
+                    title="Filter zurücksetzen"></span>
+            </div>
+            }
+        </div>
     </nav>
 
     <section class="grid">
@@ -81,5 +108,16 @@
             <p class="title">Let's Plan the Next Team Event Together</p>
             <p class="badge">Ends in 1 Day</p>
         </button>
+        <button>
+            <p class="category">Education &amp; Learning</p>
+            <p class="title">AI Tools in Daily Work &amp; Study</p>
+            <p class="badge">Ends in 5 Days</p>
+        </button>
+        <button>
+            <p class="category">Workplace Culture</p>
+            <p class="title">Remote Work vs Hybrid Office Survey</p>
+            <p class="badge">Ends in 4 Days</p>
+        </button>
     </section>
+    <footer></footer>
 </main>

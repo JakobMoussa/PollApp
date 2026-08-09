@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-poll-list',
@@ -7,5 +7,32 @@ import { Component } from '@angular/core';
   styleUrl: './poll-list.component.scss'
 })
 export class PollListComponent {
+  isDropdownOpen = false;
+  selectedCategory = 'All Surveys';
 
+  categories: string[] = [
+    'All Surveys',
+    'Team Activities',
+    'Health & Wellness',
+    'Gaming & Entertainment',
+    'Education & Learning',
+    'Lifestyle & Preferences',
+    'Technology & Innovation'
+  ];
+
+  toggleDropdown(event: MouseEvent) {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  selectCategory(category: string, event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedCategory = category;
+    this.isDropdownOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeDropdown() {
+    this.isDropdownOpen = false;
+  }
 }
