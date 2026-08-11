@@ -1,8 +1,10 @@
 import { Component, HostListener } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-poll-list',
-  imports: [],
+  standalone: true,
+  imports: [RouterLink],
   templateUrl: './poll-list.component.html',
   styleUrl: './poll-list.component.scss'
 })

@@ -1,0 +1,88 @@
+<header class="header">
+    <a routerLink="/polls" class="logo-link">
+        <img src="/icons/pollapp-logo.svg" alt="Poll App Logo" class="logo-img">
+    </a>
+    <button class="create-survey-btn" routerLink="/polls/create">Create survey</button>
+</header>
+
+<main class="poll-detail-container">
+    <div class="poll-layout">
+        <section class="survey-card">
+            <div class="meta-row">
+                <span class="status-badge">{{ poll.status }}</span>
+                <div class="meta-info">
+                    <span class="ends-date">Ends on {{ poll.endsOn }}</span>
+                    <span class="category-info">Category: <strong>{{ poll.category }}</strong></span>
+                </div>
+            </div>
+
+            <h1 class="survey-title">
+                Let<span class="orange-dot">•</span>s Plan the Next Team<br>Event Together
+            </h1>
+
+            <p class="survey-description">
+                {{ poll.description }}
+            </p>
+
+            <div class="questions-grid">
+                @for (q of poll.questions; track q.id) {
+                <div class="question-block">
+                    <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
+                    @if (q.subtitle) {
+                    <p class="question-subtitle">{{ q.subtitle }}</p>
+                    }
+
+                    <div class="options-list">
+                        @for (opt of q.options; track opt.key) {
+                        <label class="option-item" (click)="toggleOption(q.id, opt.key)">
+                            <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
+                                @if (isSelected(q.id, opt.key)) {
+                                <svg width="12" height="10" viewBox="0 0 12 10" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#35273A" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                }
+                            </div>
+                            <span class="option-text">
+                                <strong>{{ opt.key }}.</strong> {{ opt.text }}
+                            </span>
+                        </label>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+
+            <div class="survey-card-footer">
+                <button class="complete-survey-btn" (click)="completeSurvey()">Complete survey</button>
+            </div>
+        </section>
+
+        <section class="results-card">
+            <h2 class="results-title">
+                Survey results <span class="live-badge">LIVE</span>
+            </h2>
+
+            <div class="results-list">
+                @for (q of poll.questions; track q.id) {
+                <div class="result-question">
+                    <h4 class="result-question-title">{{ q.number }}. {{ q.text }}</h4>
+
+                    <div class="result-options">
+                        @for (opt of q.options; track opt.key) {
+                        <div class="result-row">
+                            <span class="opt-key">{{ opt.key }}</span>
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" [style.width.%]="opt.percentage"></div>
+                            </div>
+                            <span class="opt-percentage">{{ opt.percentage }}%</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+        </section>
+    </div>
+</main>
