@@ -6,6 +6,7 @@
 </header>
 
 <main class="poll-detail-container">
+    @if (poll) {
     <div class="poll-layout">
         <section class="survey-card">
             <div class="meta-row">
@@ -17,7 +18,7 @@
             </div>
 
             <h1 class="survey-title">
-                Let<span class="orange-dot">•</span>s Plan the Next Team<br>Event Together
+                {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix }}
             </h1>
 
             <p class="survey-description">
@@ -81,4 +82,5 @@
             </div>
         </section>
     </div>
+    }
 </main>
