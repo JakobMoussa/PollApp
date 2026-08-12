@@ -1,6 +1,6 @@
 <header class="header">
     <a routerLink="/polls" class="logo-link">
-        <img src="/icons/pollapp-logo.svg" alt="Poll App Logo" class="logo-img">
+        <img src="/icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
     </a>
     <button class="create-survey-btn" routerLink="/polls/create">Create survey</button>
 </header>
@@ -37,11 +37,7 @@
                         <label class="option-item" (click)="toggleOption(q.id, opt.key)">
                             <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
                                 @if (isSelected(q.id, opt.key)) {
-                                <svg width="12" height="10" viewBox="0 0 12 10" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 5L4.5 8.5L11 1.5" stroke="#35273A" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
+                                <img src="/icons/check.svg" alt="ckeck-icon">
                                 }
                             </div>
                             <span class="option-text">

@@ -187,8 +187,14 @@ main {
         transition: all 0.15s ease;
 
         &.checked {
-          border-color: #35273A;
-          background-color: transparent;
+          background-color: #FFB770;
+          border-color: #FFB770;
+        }
+
+        img {
+          width: 10px;
+          height: auto;
+          display: block;
         }
       }
 

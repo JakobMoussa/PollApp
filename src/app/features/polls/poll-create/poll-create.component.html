@@ -1,1 +1,143 @@
-<p>poll-create works!</p>
+<header class="header">
+</header>
+
+<main class="poll-create-container">
+    <div class="outer-card">
+        <div class="card-top-header">
+            <div class="badge-and-title">
+                <span class="draft-badge">Draft</span>
+                <h1 class="create-title">Create new survey</h1>
+            </div>
+            <button class="cancel-btn" routerLink="/polls" type="button">
+                Cancel <span class="cancel-x"><img src="/icons/close.svg" alt="close-icon"></span>
+            </button>
+        </div>
+
+        <div class="inner-form-card">
+            <div class="form-top-row">
+                <div class="left-col">
+                    <div class="field-group">
+                        <label class="field-label">Survey name</label>
+                        <div class="input-with-trash">
+                            <input type="text" class="form-input" [(ngModel)]="surveyName" placeholder="">
+                            <button class="icon-trash-btn" type="button" (click)="clearSurveyName()"
+                                title="Delete survey name">
+                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sub-fields-row">
+                        <div class="field-group">
+                            <label class="field-label">Set end date <span class="optional">(optional)</span></label>
+                            <div class="input-with-trash">
+                                <input type="text" class="form-input" [(ngModel)]="endDate" placeholder=""
+                                    onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                                <button class="icon-trash-btn" type="button" (click)="clearEndDate()"
+                                    title="Delete end date">
+                                    <img src="/icons/Delete.svg" alt="Delete-icon">
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="category-wrapper">
+                            <button class="category-btn" type="button" (click)="toggleCategoryDropdown($event)">
+                                <span>Choose category</span>
+                                <img [src]="isCategoryOpen ? '/icons/drop_down.svg' : '/icons/arrow_drop_down.svg'"
+                                    alt="drop Down" class="dropdown-arrow">
+                            </button>
+                            @if (isCategoryOpen) {
+                            <div class="dropdown-menu">
+                                <ul>
+                                    @for (cat of categories; track cat) {
+                                    <li (click)="selectCategory(cat, $event)"
+                                        [class.active-category]="cat === category">
+                                        {{ cat }}
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                            }
+                            @if (category) {
+                            <div class="selected-category-badge">
+                                <span>{{ category }}</span>
+                                <span class="remove-category" (click)="selectCategory('', $event)"
+                                    title="Filter zurücksetzen"></span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col">
+                    <div class="field-group">
+                        <label class="field-label">Describing text <span class="optional">(optional)</span></label>
+                        <div class="textarea-with-trash">
+                            <textarea class="form-textarea" [(ngModel)]="description" placeholder=""></textarea>
+                            <button class="icon-trash-btn" type="button" (click)="clearDescription()"
+                                title="Delete description">
+                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="questions-grid">
+                @for (question of questions; track question.id; let qIndex = $index) {
+                <div class="question-card-block">
+                    <div class="question-title-row">
+                        <h3 class="question-heading">{{ qIndex + 1 }}. Question</h3>
+                        <button class="icon-trash-btn" type="button" (click)="removeQuestion(qIndex)"
+                            title="Delete question">
+                            <img src="/icons/Delete.svg" alt="Delete-icon">
+                        </button>
+                    </div>
+
+                    <input type="text" class="form-input question-input" [(ngModel)]="question.text"
+                        placeholder="Which date would work best for you?">
+
+                    <div class="answers-header-row">
+                        <span class="answers-label">Answers</span>
+                        <label class="allow-multiple-checkbox">
+                            <input type="checkbox" [(ngModel)]="question.allowMultiple">
+                            <span>Allow multiple answers.</span>
+                        </label>
+                    </div>
+
+                    <div class="answers-list">
+                        @for (opt of question.options; track opt.key; let aIndex = $index) {
+                        <div class="answer-row">
+                            <span class="answer-key">{{ opt.key }}.</span>
+                            <input type="text" class="form-input answer-input" [(ngModel)]="opt.text" placeholder="">
+                            <button class="icon-trash-btn" type="button" (click)="removeAnswer(question, aIndex)"
+                                title="Delete answer">
+                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                            </button>
+                        </div>
+                        }
+                    </div>
+
+                    @if (question.options.length < 5) {
+                    <button class="add-answer-btn" type="button" (click)="addAnswer(question)">
+                        <span>Add answer</span>
+                        <span class="plus-icon-circle">+</span>
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="add-question-wrapper">
+                <button class="add-next-question-btn" type="button" (click)="addQuestion()">
+                    <span>Add next question</span>
+                    <span class="plus-circle">+</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="publish-btn" type="button" (click)="publishSurvey()">Publish</button>
+        </div>
+    </div>
+</main>

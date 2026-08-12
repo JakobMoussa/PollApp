@@ -19,7 +19,8 @@ export class PollListComponent {
     'Gaming & Entertainment',
     'Education & Learning',
     'Lifestyle & Preferences',
-    'Technology & Innovation'
+    'Technology & Innovation',
+    'Workplace Culture'
   ];
 
   toggleDropdown(event: MouseEvent) {
