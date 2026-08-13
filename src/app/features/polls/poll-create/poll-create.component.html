@@ -118,12 +118,12 @@
                         }
                     </div>
 
-                    @if (question.options.length < 5) {
-                    <button class="add-answer-btn" type="button" (click)="addAnswer(question)">
+                    @if (question.options.length < 5) { <button class="add-answer-btn" type="button"
+                        (click)="addAnswer(question)">
                         <span>Add answer</span>
                         <span class="plus-icon-circle">+</span>
-                    </button>
-                    }
+                        </button>
+                        }
                 </div>
                 }
             </div>
@@ -140,4 +140,13 @@
             <button class="publish-btn" type="button" (click)="publishSurvey()">Publish</button>
         </div>
     </div>
+
+    @if (showPublishPopup) {
+    <div class="publish-popup" [class.slide-in]="showPublishPopup">
+        <img src="/icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closePublishPopup()">
+        <div class="popup-text">
+            <span class="popup-subtitle">Your survey is now<br> published</span>
+        </div>
+    </div>
+    }
 </main>

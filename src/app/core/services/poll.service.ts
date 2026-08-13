@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Poll } from '../models/poll.model';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PollService {
+  constructor(private supabaseService: SupabaseService) {}
+
   private polls: Poll[] = [
     {
       id: '1',
@@ -384,5 +387,62 @@ export class PollService {
 
   getPollById(id: string): Poll | undefined {
     return this.polls.find(p => p.id === id);
+  }
+
+  async savePollToSupabase(pollData: {
+    title: string;
+    description: string;
+    category: string;
+    options: string[];
+  }): Promise<string | null> {
+    const { data: poll, error: pollError } = await this.supabaseService.client
+      .from('polls')
+      .insert({ title: pollData.title, description: pollData.description, category: pollData.category })
+      .select('id')
+      .single();
+
+    if (pollError || !poll) {
+      console.error('Error saving poll:', pollError?.message);
+      return null;
+    }
+
+    const optionsToInsert = pollData.options
+      .filter(opt => opt.trim().length > 0)
+      .map(opt => ({ poll_id: poll.id, option_text: opt }));
+
+    if (optionsToInsert.length > 0) {
+      const { error: optError } = await this.supabaseService.client
+        .from('poll_options')
+        .insert(optionsToInsert);
+
+      if (optError) {
+        console.error('Error saving poll options:', optError?.message);
+      }
+    }
+
+    return poll.id;
+  }
+
+  async loadPollsFromSupabase(): Promise<Poll[]> {
+    const { data, error } = await this.supabaseService.client
+      .from('polls')
+      .select('*');
+
+    if (error || !data) {
+      console.error('Error loading polls:', error?.message);
+      return [];
+    }
+
+    return data.map((p: any): Poll => ({
+      id: p.id,
+      title: p.title,
+      category: p.category ?? 'Allgemein',
+      endsOn: '',
+      badge: 'Neu',
+      status: 'Published',
+      description: p.description ?? '',
+      isEndingSoon: false,
+      questions: []
+    }));
   }
 }

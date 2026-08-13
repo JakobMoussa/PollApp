@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { PollService } from '../../../core/services/poll.service';
 
 export interface AnswerOption {
   key: string;
@@ -28,6 +29,7 @@ export class PollCreateComponent {
   category: string = '';
   description: string = '';
   isCategoryOpen: boolean = false;
+  showPublishPopup: boolean = false;
 
   categories: string[] = [
     'All Surveys',
@@ -61,7 +63,7 @@ export class PollCreateComponent {
     }
   ];
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private pollService: PollService) { }
 
   clearSurveyName() {
     this.surveyName = '';
@@ -137,15 +139,28 @@ export class PollCreateComponent {
     }
   }
 
-  publishSurvey() {
-    console.log('Publishing survey:', {
-      surveyName: this.surveyName,
-      endDate: this.endDate,
-      category: this.category,
-      description: this.description,
-      questions: this.questions
-    });
+  closePublishPopup() {
+    this.showPublishPopup = false;
     this.router.navigate(['/polls']);
   }
-}
 
+  async publishSurvey() {
+    const allOptions = this.questions.flatMap(q =>
+      q.options.map(o => o.text)
+    );
+
+    const savedId = await this.pollService.savePollToSupabase({
+      title: this.surveyName,
+      description: this.description,
+      category: this.category,
+      options: allOptions
+    });
+
+    if (savedId) {
+      this.showPublishPopup = true;
+    } else {
+      console.error('Poll could not be saved to Supabase.');
+      this.showPublishPopup = true;
+    }
+  }
+}

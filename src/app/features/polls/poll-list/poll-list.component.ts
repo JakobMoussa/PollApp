@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PollService } from '../../../core/services/poll.service';
@@ -30,18 +30,21 @@ export class PollListComponent implements OnInit {
   endingSoonPolls: Poll[] = [];
   allGridPolls: Poll[] = [];
 
-  constructor(private pollService: PollService) {}
+  constructor(private pollService: PollService, private cdr: ChangeDetectorRef) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.endingSoonPolls = this.pollService.getEndingSoonPolls();
-    this.allGridPolls = this.pollService.getGridPolls();
+
+    const supabasePolls = await this.pollService.loadPollsFromSupabase();
+    this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
+    this.cdr.markForCheck();
   }
 
   get filteredGridPolls(): Poll[] {
     if (!this.selectedCategory || this.selectedCategory === 'All Surveys') {
       return this.allGridPolls;
     }
-    return this.allGridPolls.filter(p => 
+    return this.allGridPolls.filter(p =>
       p.category.toLowerCase().trim() === this.selectedCategory.toLowerCase().trim()
     );
   }
