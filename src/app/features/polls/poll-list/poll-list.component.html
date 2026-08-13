@@ -35,8 +35,8 @@
 
     <nav class="filter-row">
         <ul>
-            <button [class.active]="activeTab === 'active'" (click)="setActiveTab('active')">Active survey</button>
-            <button [class.active]="activeTab === 'inactive'" (click)="setActiveTab('inactive')">Past survey</button>
+            <button [class.active]="activeTab === 'active'" [class.inactive]="activeTab !== 'active'" (click)="setActiveTab('active')">Active survey</button>
+            <button [class.active]="activeTab === 'inactive'" [class.inactive]="activeTab !== 'inactive'" (click)="setActiveTab('inactive')">Past survey</button>
         </ul>
         <div class="dropdown-wrapper">
             <button class="sort" (click)="toggleDropdown($event)">
