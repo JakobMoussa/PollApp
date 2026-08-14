@@ -144,6 +144,17 @@ export class PollCreateComponent {
     this.router.navigate(['/polls']);
   }
 
+  isFormValid(): boolean {
+    if (!this.surveyName || this.surveyName.trim() === '') return false;
+    if (!this.endDate || this.endDate.trim() === '') return false;
+    if (!this.category || this.category.trim() === '') return false;
+
+    const hasValidQuestion = this.questions.some(q => q.text && q.text.trim() !== '');
+    if (!hasValidQuestion) return false;
+
+    return true;
+  }
+
   async publishSurvey() {
     const allOptions = this.questions.flatMap(q =>
       q.options.map(o => o.text)

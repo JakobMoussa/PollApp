@@ -445,4 +445,51 @@ export class PollService {
       questions: []
     }));
   }
+
+  async getPollByIdFromSupabase(id: string): Promise<Poll | null> {
+    const { data, error } = await this.supabaseService.client
+      .from('polls')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) {
+      console.error('Error loading poll:', error?.message);
+      return null;
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      category: data.category ?? 'Allgemein',
+      endsOn: '',
+      badge: 'Neu',
+      status: 'Published',
+      description: data.description ?? '',
+      isEndingSoon: false,
+      questions: [] // Ideally we fetch options here too, but keeping it same as loadPollsFromSupabase
+    };
+  }
+
+  subscribeToPollDeletions(callback: (deletedPollId: string) => void) {
+    const channel = this.supabaseService.client
+      .channel('polls-deletions')
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'polls' },
+        (payload: any) => {
+          if (payload.old && payload.old.id) {
+            callback(payload.old.id);
+          }
+        }
+      )
+      .subscribe();
+    return channel;
+  }
+
+  unsubscribeFromChannel(channel: any) {
+    if (channel) {
+      this.supabaseService.client.removeChannel(channel);
+    }
+  }
 }

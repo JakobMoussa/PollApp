@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PollService } from '../../../core/services/poll.service';
@@ -11,7 +11,7 @@ import { Poll } from '../../../core/models/poll.model';
   templateUrl: './poll-list.component.html',
   styleUrl: './poll-list.component.scss'
 })
-export class PollListComponent implements OnInit {
+export class PollListComponent implements OnInit, OnDestroy {
   isDropdownOpen = false;
   selectedCategory = 'All Surveys';
   activeTab: 'active' | 'inactive' = 'active';
@@ -29,6 +29,7 @@ export class PollListComponent implements OnInit {
 
   endingSoonPolls: Poll[] = [];
   allGridPolls: Poll[] = [];
+  private deleteSubscriptionChannel: any;
 
   constructor(private pollService: PollService, private cdr: ChangeDetectorRef) { }
 
@@ -38,6 +39,18 @@ export class PollListComponent implements OnInit {
     const supabasePolls = await this.pollService.loadPollsFromSupabase();
     this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
     this.cdr.markForCheck();
+
+    this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
+      this.allGridPolls = this.allGridPolls.filter(p => p.id !== deletedId);
+      this.endingSoonPolls = this.endingSoonPolls.filter(p => p.id !== deletedId);
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.deleteSubscriptionChannel) {
+      this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
+    }
   }
 
   get filteredGridPolls(): Poll[] {

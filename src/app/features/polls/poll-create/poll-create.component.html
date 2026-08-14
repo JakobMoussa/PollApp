@@ -137,7 +137,7 @@
         </div>
 
         <div class="card-footer">
-            <button class="publish-btn" type="button" (click)="publishSurvey()">Publish</button>
+            <button class="publish-btn" type="button" [disabled]="!isFormValid()" (click)="publishSurvey()">Publish</button>
         </div>
     </div>
 

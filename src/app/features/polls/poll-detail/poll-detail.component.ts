@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { PollService } from '../../../core/services/poll.service';
 import { Poll } from '../../../core/models/poll.model';
 
@@ -12,13 +12,16 @@ import { Poll } from '../../../core/models/poll.model';
   templateUrl: './poll-detail.component.html',
   styleUrl: './poll-detail.component.scss'
 })
-export class PollDetailComponent implements OnInit {
+export class PollDetailComponent implements OnInit, OnDestroy {
   poll!: Poll;
   selectedOptions: { [questionId: number]: { [key: string]: boolean } } = {};
   isSubmitted = false;
 
+  private deleteSubscriptionChannel: any;
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private pollService: PollService
   ) { }
 
@@ -33,7 +36,23 @@ export class PollDetailComponent implements OnInit {
       }
       this.selectedOptions = {};
       this.isSubmitted = false;
+
+      if (this.deleteSubscriptionChannel) {
+        this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
+      }
+      
+      this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
+        if (this.poll && this.poll.id === deletedId) {
+          this.router.navigate(['/polls']);
+        }
+      });
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.deleteSubscriptionChannel) {
+      this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
+    }
   }
 
   get titleParts(): { prefix: string; hasDot: boolean; suffix: string } {
