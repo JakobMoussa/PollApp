@@ -221,9 +221,20 @@ main {
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
 
-      &:hover {
+      &:hover:not(:disabled) {
         background-color: #FEB770;
         transform: translateY(-1px);
+      }
+
+      &:disabled {
+        background-color: #E0E0E0;
+        color: #9E9E9E;
+        cursor: not-allowed;
+      }
+      
+      &.completed {
+        background-color: #9cd39c; /* Success green */
+        color: #1a4d1a;
       }
     }
   }

@@ -52,7 +52,9 @@
             </div>
 
             <div class="survey-card-footer">
-                <button class="complete-survey-btn" (click)="completeSurvey()">Complete survey</button>
+                <button class="complete-survey-btn" [class.completed]="isSubmitted" [disabled]="isSubmitted" (click)="completeSurvey()">
+                    {{ isSubmitted ? 'Survey Completed!' : 'Complete survey' }}
+                </button>
             </div>
         </section>
 

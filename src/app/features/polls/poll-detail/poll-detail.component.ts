@@ -15,6 +15,7 @@ import { Poll } from '../../../core/models/poll.model';
 export class PollDetailComponent implements OnInit, OnDestroy {
   poll!: Poll;
   selectedOptions: { [questionId: number]: { [key: string]: boolean } } = {};
+  originalPercentages: { [questionId: number]: { [key: string]: number } } = {};
   isSubmitted = false;
 
   private deleteSubscriptionChannel: any;
@@ -37,10 +38,19 @@ export class PollDetailComponent implements OnInit, OnDestroy {
       this.selectedOptions = {};
       this.isSubmitted = false;
 
+      if (this.poll) {
+        this.poll.questions.forEach(q => {
+          this.originalPercentages[q.id] = {};
+          q.options.forEach(opt => {
+            this.originalPercentages[q.id][opt.key] = opt.percentage || 0;
+          });
+        });
+      }
+
       if (this.deleteSubscriptionChannel) {
         this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
       }
-      
+
       this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
         if (this.poll && this.poll.id === deletedId) {
           this.router.navigate(['/polls']);
@@ -75,10 +85,37 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   }
 
   toggleOption(questionId: number, key: string) {
+    if (this.isSubmitted) return;
+
     if (!this.selectedOptions[questionId]) {
       this.selectedOptions[questionId] = {};
     }
     this.selectedOptions[questionId][key] = !this.selectedOptions[questionId][key];
+
+    this.recalculatePercentages(questionId);
+  }
+
+  recalculatePercentages(questionId: number) {
+    const question = this.poll.questions.find(q => q.id === questionId);
+    if (!question) return;
+
+    let userVotesCount = 0;
+    if (this.selectedOptions[questionId]) {
+      Object.values(this.selectedOptions[questionId]).forEach(isSelected => {
+        if (isSelected) userVotesCount++;
+      });
+    }
+
+    const voteWeight = 10;
+    const totalOriginalVotes = 100;
+    const newTotalVotes = totalOriginalVotes + (userVotesCount * voteWeight);
+
+    question.options.forEach(opt => {
+      const originalVote = this.originalPercentages[questionId][opt.key];
+      const userVote = this.selectedOptions[questionId]?.[opt.key] ? voteWeight : 0;
+
+      opt.percentage = Math.round(((originalVote + userVote) / newTotalVotes) * 100);
+    });
   }
 
   isSelected(questionId: number, key: string): boolean {

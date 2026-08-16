@@ -6,7 +6,7 @@ import { SupabaseService } from './supabase.service';
   providedIn: 'root'
 })
 export class PollService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private supabaseService: SupabaseService) { }
 
   private polls: Poll[] = [
     {
@@ -270,7 +270,7 @@ export class PollService {
     },
     {
       id: '6',
-      title: "Summer Team Retreat Location & Activities",
+      title: "Summer Team Location & Activities",
       category: "Team Activities",
       endsOn: "07.09.2025",
       badge: "Ends in 4 Days",
