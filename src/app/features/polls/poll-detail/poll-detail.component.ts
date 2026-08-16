@@ -27,25 +27,16 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe(async params => {
       const pollId = params.get('id') || '1';
-      const loadedPoll = this.pollService.getPollById(pollId);
-      if (loadedPoll) {
-        this.poll = loadedPoll;
-      } else {
-        this.poll = this.pollService.getPolls()[0];
+      let loadedPoll = this.pollService.getPollById(pollId);
+      
+      if (!loadedPoll) {
+        loadedPoll = await this.pollService.getPollByIdFromSupabase(pollId) || this.pollService.getPolls()[0];
       }
-      this.selectedOptions = {};
-      this.isSubmitted = false;
-
-      if (this.poll) {
-        this.poll.questions.forEach(q => {
-          this.originalPercentages[q.id] = {};
-          q.options.forEach(opt => {
-            this.originalPercentages[q.id][opt.key] = opt.percentage || 0;
-          });
-        });
-      }
+      
+      this.poll = loadedPoll;
+      this.setupPollData();
 
       if (this.deleteSubscriptionChannel) {
         this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
@@ -57,6 +48,20 @@ export class PollDetailComponent implements OnInit, OnDestroy {
         }
       });
     });
+  }
+
+  private setupPollData() {
+    this.selectedOptions = {};
+    this.isSubmitted = false;
+
+    if (this.poll && this.poll.questions) {
+      this.poll.questions.forEach(q => {
+        this.originalPercentages[q.id] = {};
+        q.options.forEach(opt => {
+          this.originalPercentages[q.id][opt.key] = opt.percentage || 0;
+        });
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -82,6 +87,13 @@ export class PollDetailComponent implements OnInit, OnDestroy {
       hasDot: false,
       suffix: ''
     };
+  }
+
+  get hasResults(): boolean {
+    if (!this.poll || !this.poll.questions) return false;
+    return this.poll.questions.some(q => 
+      q.options.some(opt => opt.percentage && opt.percentage > 0)
+    );
   }
 
   toggleOption(questionId: number, key: string) {
@@ -124,5 +136,13 @@ export class PollDetailComponent implements OnInit, OnDestroy {
 
   completeSurvey() {
     this.isSubmitted = true;
+
+    const hasSelection = Object.values(this.selectedOptions).some(options =>
+      Object.values(options).some(isSelected => isSelected)
+    );
+
+    if (hasSelection) {
+      this.router.navigate(['/polls']);
+    }
   }
 }

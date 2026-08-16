@@ -341,9 +341,9 @@ export class PollService {
       id: '8',
       title: "Remote Work vs Hybrid Office Survey",
       category: "Workplace Culture",
-      endsOn: "09.09.2025",
-      badge: "Ends in 4 Days",
-      status: "Published",
+      endsOn: "09.08.2024",
+      badge: "Ended",
+      status: "Past",
       isEndingSoon: false,
       description: "Give feedback on our workplace culture, peer recognition, and open communication across departments.",
       questions: [
@@ -433,41 +433,96 @@ export class PollService {
       return [];
     }
 
-    return data.map((p: any): Poll => ({
-      id: p.id,
-      title: p.title,
-      category: p.category ?? 'Allgemein',
-      endsOn: '',
-      badge: 'Neu',
-      status: 'Published',
-      description: p.description ?? '',
-      isEndingSoon: false,
-      questions: []
-    }));
+    return data.map((p: any): Poll => {
+      let desc = p.description ?? '';
+      if (desc.includes('|||JSON|||')) {
+        desc = desc.split('|||JSON|||')[0];
+      }
+      return {
+        id: p.id,
+        title: p.title,
+        category: p.category ?? 'Allgemein',
+        endsOn: '',
+        badge: 'Neu',
+        status: 'Published',
+        description: desc,
+        isEndingSoon: false,
+        questions: []
+      };
+    });
   }
 
   async getPollByIdFromSupabase(id: string): Promise<Poll | null> {
-    const { data, error } = await this.supabaseService.client
+    const { data: pollData, error: pollError } = await this.supabaseService.client
       .from('polls')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error || !data) {
-      console.error('Error loading poll:', error?.message);
+    if (pollError || !pollData) {
+      console.error('Error loading poll:', pollError?.message);
       return null;
     }
 
+    const { data: optionsData, error: optionsError } = await this.supabaseService.client
+      .from('poll_options')
+      .select('*')
+      .eq('poll_id', id);
+
+    if (optionsError) {
+      console.error('Error loading poll options:', optionsError.message);
+    }
+
+    let description = pollData.description ?? '';
+    let questions: any[] = [];
+
+    if (description.includes('|||JSON|||')) {
+      const parts = description.split('|||JSON|||');
+      description = parts[0];
+      try {
+        const parsedQuestions = JSON.parse(parts[1]);
+        questions = parsedQuestions.map((q: any) => ({
+          id: q.id,
+          number: q.id,
+          text: q.text,
+          subtitle: q.allowMultiple ? "More than one answers are possible." : "",
+          options: q.options.map((opt: any, index: number) => ({
+            key: String.fromCharCode(65 + index),
+            text: opt.text,
+            percentage: 0
+          }))
+        }));
+      } catch (e) {
+        console.error('Failed to parse questions JSON', e);
+      }
+    }
+
+    if (questions.length === 0) {
+      const options = (optionsData || []).map((opt, index) => ({
+        key: String.fromCharCode(65 + index),
+        text: opt.option_text,
+        percentage: 0
+      }));
+
+      questions = options.length > 0 ? [{
+        id: 1,
+        number: 1,
+        text: pollData.title,
+        subtitle: description,
+        options: options
+      }] : [];
+    }
+
     return {
-      id: data.id,
-      title: data.title,
-      category: data.category ?? 'Allgemein',
+      id: pollData.id,
+      title: pollData.title,
+      category: pollData.category ?? 'Allgemein',
       endsOn: '',
       badge: 'Neu',
       status: 'Published',
-      description: data.description ?? '',
+      description: description,
       isEndingSoon: false,
-      questions: [] // Ideally we fetch options here too, but keeping it same as loadPollsFromSupabase
+      questions: questions
     };
   }
 

@@ -54,10 +54,18 @@ export class PollListComponent implements OnInit, OnDestroy {
   }
 
   get filteredGridPolls(): Poll[] {
-    if (!this.selectedCategory || this.selectedCategory === 'All Surveys') {
-      return this.allGridPolls;
+    let filtered = this.allGridPolls;
+
+    if (this.activeTab === 'active') {
+      filtered = filtered.filter(p => p.status !== 'Past' && p.status !== 'Closed');
+    } else {
+      filtered = filtered.filter(p => p.status === 'Past' || p.status === 'Closed');
     }
-    return this.allGridPolls.filter(p =>
+
+    if (!this.selectedCategory || this.selectedCategory === 'All Surveys') {
+      return filtered;
+    }
+    return filtered.filter(p =>
       p.category.toLowerCase().trim() === this.selectedCategory.toLowerCase().trim()
     );
   }

@@ -63,6 +63,7 @@
                 Survey results <span class="live-badge">LIVE</span>
             </h2>
 
+            @if (hasResults) {
             <div class="results-list">
                 @for (q of poll.questions; track q.id) {
                 <div class="result-question">
@@ -82,6 +83,12 @@
                 </div>
                 }
             </div>
+            } @else {
+            <div class="no-results-message" style="color: #666; font-size: 0.95rem; margin-top: 1rem; line-height: 1.5;">
+                <p>Results will be shown here after participants complete the survey.</p>
+                <p style="margin-top: 0.5rem;">There are no answears yet.</p>
+            </div>
+            }
         </section>
     </div>
     }

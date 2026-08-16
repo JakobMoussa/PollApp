@@ -162,7 +162,7 @@ export class PollCreateComponent {
 
     const savedId = await this.pollService.savePollToSupabase({
       title: this.surveyName,
-      description: this.description,
+      description: this.description + '|||JSON|||' + JSON.stringify(this.questions),
       category: this.category,
       options: allOptions
     });
