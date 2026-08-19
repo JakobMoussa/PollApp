@@ -53,7 +53,11 @@
 
             <div class="survey-card-footer">
                 <button class="complete-survey-btn" [class.completed]="isSubmitted" [disabled]="isSubmitted" (click)="completeSurvey()">
-                    {{ isSubmitted ? 'Survey Completed!' : 'Complete survey' }}
+                    <span class="btn-text-desktop">{{ isSubmitted ? 'Survey Completed!' : 'Complete survey' }}</span>
+                    <span class="btn-text-mobile">
+                        {{ isSubmitted ? 'Completed' : 'Complete' }}
+                        <img src="/icons/check.svg" alt="check icon" class="check-icon">
+                    </span>
                 </button>
             </div>
         </section>

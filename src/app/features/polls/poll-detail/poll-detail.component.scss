@@ -231,6 +231,10 @@ main {
         color: #9E9E9E;
         cursor: not-allowed;
       }
+
+      .btn-text-mobile {
+        display: none;
+      }
     }
   }
 }
@@ -309,5 +313,50 @@ main {
         flex-shrink: 0;
       }
     }
+  }
+}
+
+/* ========================================= */
+/* Media Queries for Responsive Design       */
+/* ========================================= */
+
+@media (max-width: 1250px) {}
+
+@media (max-width: 1024px) {}
+
+@media (max-width: 768px) {}
+
+@media (max-width: 500px) {
+  .poll-detail-container {
+    padding: 12px 30px 50px 30px;
+  }
+}
+
+@media (max-width: 425px) {
+  .header .create-survey-btn {
+    display: none;
+  }
+
+  .survey-card .survey-card-footer .complete-survey-btn {
+    .btn-text-desktop {
+      display: none;
+    }
+    
+    .btn-text-mobile {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      .check-icon {
+        width: 14px;
+        height: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 400px) {
+  .poll-detail-container {
+    padding: 12px 20px 35px 20px;
   }
 }
