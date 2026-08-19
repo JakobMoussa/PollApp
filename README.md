@@ -90,15 +90,6 @@ PollApp supports the following survey categories out of the box:
 
 ---
 
-## 🔧 Key Architecture Decisions
-
-- **Standalone Components** — All Angular components use the standalone API (no NgModules)
-- **Lazy Loading** — Routes use `loadComponent()` for optimal bundle splitting
-- **Hybrid Data** — Static mock polls are merged with live Supabase polls at runtime
-- **Realtime** — Supabase Postgres Changes subscription keeps the poll list in sync across clients
-
----
-
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
