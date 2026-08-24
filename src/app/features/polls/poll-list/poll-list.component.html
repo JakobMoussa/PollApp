@@ -6,7 +6,7 @@
             <p class="hero-txt">Create and share surveys in minutes – from team events to workplace culture. Collect
                 opinions, engage
                 your audience, and turn feedback into action.</p>
-            <button class="new-survey" routerLink="/polls/create">
+            <button class="new-survey" (click)="openCreatePopup()">
                 <span>New survey</span>
                 <img src="icons/add_circle_purple.svg" alt="" class="survey-icon">
             </button>
@@ -76,3 +76,7 @@
     </section>
     <footer></footer>
 </main>
+
+@if (isCreatePopupOpen) {
+<app-poll-create (closePopup)="closeCreatePopup()"></app-poll-create>
+}

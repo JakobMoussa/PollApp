@@ -1,9 +1,4 @@
-<header class="header">
-    <a routerLink="/polls" class="logo-link">
-        <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
-    </a>
-</header>
-
+<div class="poll-create-overlay">
 <main class="poll-create-container">
     <div class="outer-card">
         <div class="card-top-header">
@@ -11,8 +6,9 @@
                 <span class="draft-badge">Draft</span>
                 <h1 class="create-title">Create new survey</h1>
             </div>
-            <button class="cancel-btn" routerLink="/polls" type="button">
-                <span class="cancel-text">Cancel</span> <span class="cancel-x"><img src="icons/close.svg" alt="close-icon"></span>
+            <button class="cancel-btn" (click)="onCancel()" type="button">
+                <span class="cancel-text">Cancel</span> <span class="cancel-x"><img src="icons/close.svg"
+                        alt="close-icon"></span>
             </button>
         </div>
 
@@ -22,12 +18,15 @@
                     <div class="field-group">
                         <label class="field-label">Survey name</label>
                         <div class="input-with-trash" style="position: relative;">
-                            <input type="text" class="form-input" [(ngModel)]="surveyName" placeholder="" required pattern=".*\S.*" #surveyNameCtrl="ngModel">
+                            <input type="text" class="form-input" [(ngModel)]="surveyName" placeholder="" required
+                                pattern=".*\S.*" #surveyNameCtrl="ngModel">
                             <button class="icon-trash-btn" type="button" (click)="clearSurveyName()"
                                 title="Delete survey name">
                                 <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
-                            <span class="error-text" [class.visible]="surveyNameCtrl.invalid && surveyNameCtrl.touched">Survey name is required</span>
+                            <span class="error-text"
+                                [class.visible]="surveyNameCtrl.invalid && surveyNameCtrl.touched">Survey name is
+                                required</span>
                         </div>
                     </div>
 
@@ -100,8 +99,10 @@
 
                     <div class="question-input-wrapper" style="position: relative;">
                         <input type="text" class="form-input question-input" [(ngModel)]="question.text"
-                            placeholder="Which date would work best for you?" required pattern=".*\S.*" #qTextCtrl="ngModel">
-                        <span class="error-text" [class.visible]="qTextCtrl.invalid && qTextCtrl.touched">Question is required</span>
+                            placeholder="Which date would work best for you?" required pattern=".*\S.*"
+                            #qTextCtrl="ngModel">
+                        <span class="error-text" [class.visible]="qTextCtrl.invalid && qTextCtrl.touched">Question is
+                            required</span>
                     </div>
 
                     <div class="answers-header-row">
@@ -116,12 +117,14 @@
                         @for (opt of question.options; track opt.key; let aIndex = $index) {
                         <div class="answer-row" style="position: relative;">
                             <span class="answer-key">{{ opt.key }}.</span>
-                            <input type="text" class="form-input answer-input" [(ngModel)]="opt.text" placeholder="" required pattern=".*\S.*" #aTextCtrl="ngModel">
+                            <input type="text" class="form-input answer-input" [(ngModel)]="opt.text" placeholder=""
+                                required pattern=".*\S.*" #aTextCtrl="ngModel">
                             <button class="icon-trash-btn" type="button" (click)="removeAnswer(question, aIndex)"
                                 title="Delete answer">
                                 <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
-                            <span class="error-text" style="left: 32px;" [class.visible]="aTextCtrl.invalid && aTextCtrl.touched">Answer is required</span>
+                            <span class="error-text" style="left: 32px;"
+                                [class.visible]="aTextCtrl.invalid && aTextCtrl.touched">Answer is required</span>
                         </div>
                         }
                     </div>
@@ -145,7 +148,8 @@
         </div>
 
         <div class="card-footer">
-            <button class="publish-btn" type="button" [disabled]="!isFormValid()" (click)="publishSurvey()">Publish</button>
+            <button class="publish-btn" type="button" [disabled]="!isFormValid()"
+                (click)="publishSurvey()">Publish</button>
         </div>
     </div>
 
@@ -158,3 +162,4 @@
     </div>
     }
 </main>
+</div>

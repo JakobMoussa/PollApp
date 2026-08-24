@@ -3,16 +3,18 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PollService } from '../../../core/services/poll.service';
 import { Poll } from '../../../core/models/poll.model';
+import { PollCreateComponent } from '../poll-create/poll-create.component';
 
 @Component({
   selector: 'app-poll-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, PollCreateComponent],
   templateUrl: './poll-list.component.html',
   styleUrl: './poll-list.component.scss'
 })
 export class PollListComponent implements OnInit, OnDestroy {
   isDropdownOpen = false;
+  isCreatePopupOpen = false;
   selectedCategory = 'All Surveys';
   activeTab: 'active' | 'inactive' = 'active';
 
@@ -88,5 +90,13 @@ export class PollListComponent implements OnInit, OnDestroy {
   @HostListener('document:click')
   closeDropdown() {
     this.isDropdownOpen = false;
+  }
+
+  openCreatePopup() {
+    this.isCreatePopupOpen = true;
+  }
+
+  closeCreatePopup() {
+    this.isCreatePopupOpen = false;
   }
 }

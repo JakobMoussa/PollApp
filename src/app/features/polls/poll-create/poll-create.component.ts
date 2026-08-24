@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -31,6 +31,8 @@ export class PollCreateComponent {
   isCategoryOpen: boolean = false;
   showPublishPopup: boolean = false;
 
+  @Output() closePopup = new EventEmitter<void>();
+
   categories: string[] = [
     'Team Activities',
     'Health & Wellness',
@@ -54,6 +56,10 @@ export class PollCreateComponent {
   ];
 
   constructor(private router: Router, private pollService: PollService) { }
+
+  onCancel() {
+    this.closePopup.emit();
+  }
 
   clearSurveyName() {
     this.surveyName = '';
@@ -131,7 +137,7 @@ export class PollCreateComponent {
 
   closePublishPopup() {
     this.showPublishPopup = false;
-    this.router.navigate(['/polls']);
+    this.closePopup.emit();
   }
 
   isFormValid(): boolean {
