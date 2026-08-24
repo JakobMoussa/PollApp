@@ -1,6 +1,7 @@
 :host {
     display: block;
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
     background-color: var(--primary-purple);
     padding-top: 39px;
     box-sizing: border-box;
@@ -40,7 +41,7 @@ header img {
     transition: transform 0.3s ease;
 
     &:hover {
-        content: url('/images/phone-img2.png');
+        content: url('../../../../../public/icons/phone-img2.png');
         transform: scale(1.01);
     }
 }
@@ -210,7 +211,7 @@ nav.filter-row li {
 nav.filter-row ul button,
 nav.filter-row .active,
 nav.filter-row .inactive {
-    background: var(--secondary-orange);
+    background: #FEE9D4;
     color: var(--primary-purple);
     padding: 2px 10px 2px 10px;
     cursor: pointer;
@@ -273,6 +274,24 @@ nav.filter-row button.sort {
         padding: 0;
         display: flex;
         flex-direction: column;
+        max-height: 220px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary-orange) rgba(255, 255, 255, 0.1);
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 10px;
+        }
     }
 
     li {
@@ -398,7 +417,7 @@ h2 {
 }
 
 footer {
-    padding-bottom: 300px;
+    padding-bottom: 50px;
 }
 
 /* ========================================= */

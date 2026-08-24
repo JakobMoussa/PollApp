@@ -9,7 +9,7 @@
 @font-face {
   font-family: 'Mulish';
   src: url('/fonts/Mulish/Mulish-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Mulish/static/Mulish-Regular.ttf') format('truetype');
+    url('/fonts/Mulish/static/Mulish-Regular.ttf') format('truetype');
   font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
@@ -18,7 +18,7 @@
 @font-face {
   font-family: 'Mulish';
   src: url('/fonts/Mulish/Mulish-Italic-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Mulish/static/Mulish-Italic.ttf') format('truetype');
+    url('/fonts/Mulish/static/Mulish-Italic.ttf') format('truetype');
   font-weight: 200 1000;
   font-style: italic;
   font-display: swap;
@@ -27,7 +27,7 @@
 @font-face {
   font-family: 'mulish';
   src: url('/fonts/Mulish/Mulish-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Mulish/static/Mulish-Regular.ttf') format('truetype');
+    url('/fonts/Mulish/static/Mulish-Regular.ttf') format('truetype');
   font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
@@ -36,14 +36,16 @@
 @font-face {
   font-family: 'mulish';
   src: url('/fonts/Mulish/Mulish-Italic-VariableFont_wght.ttf') format('truetype-variations'),
-       url('/fonts/Mulish/static/Mulish-Italic.ttf') format('truetype');
+    url('/fonts/Mulish/static/Mulish-Italic.ttf') format('truetype');
   font-weight: 200 1000;
   font-style: italic;
   font-display: swap;
 }
+
 $primary-purple: #35273A;
 $primary-orange: #FEB770;
 $secondary-orange: #FFCFA1;
+
 $bg-card: #FAF5FF;
 
 :root {

@@ -1,6 +1,6 @@
 <header class="header">
     <a routerLink="/polls" class="logo-link">
-        <img src="/icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
+        <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
     </a>
 </header>
 
@@ -12,7 +12,7 @@
                 <h1 class="create-title">Create new survey</h1>
             </div>
             <button class="cancel-btn" routerLink="/polls" type="button">
-                <span class="cancel-text">Cancel</span> <span class="cancel-x"><img src="/icons/close.svg" alt="close-icon"></span>
+                <span class="cancel-text">Cancel</span> <span class="cancel-x"><img src="icons/close.svg" alt="close-icon"></span>
             </button>
         </div>
 
@@ -21,12 +21,13 @@
                 <div class="left-col">
                     <div class="field-group">
                         <label class="field-label">Survey name</label>
-                        <div class="input-with-trash">
-                            <input type="text" class="form-input" [(ngModel)]="surveyName" placeholder="">
+                        <div class="input-with-trash" style="position: relative;">
+                            <input type="text" class="form-input" [(ngModel)]="surveyName" placeholder="" required pattern=".*\S.*" #surveyNameCtrl="ngModel">
                             <button class="icon-trash-btn" type="button" (click)="clearSurveyName()"
                                 title="Delete survey name">
-                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                                <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
+                            <span class="error-text" [class.visible]="surveyNameCtrl.invalid && surveyNameCtrl.touched">Survey name is required</span>
                         </div>
                     </div>
 
@@ -38,7 +39,7 @@
                                     onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
                                 <button class="icon-trash-btn" type="button" (click)="clearEndDate()"
                                     title="Delete end date">
-                                    <img src="/icons/Delete.svg" alt="Delete-icon">
+                                    <img src="icons/Delete.svg" alt="Delete-icon">
                                 </button>
                             </div>
                         </div>
@@ -46,7 +47,7 @@
                         <div class="category-wrapper">
                             <button class="category-btn" type="button" (click)="toggleCategoryDropdown($event)">
                                 <span>Choose category</span>
-                                <img [src]="isCategoryOpen ? '/icons/drop_down.svg' : '/icons/arrow_drop_down.svg'"
+                                <img [src]="isCategoryOpen ? 'icons/drop_down.svg' : 'icons/arrow_drop_down.svg'"
                                     alt="drop Down" class="dropdown-arrow">
                             </button>
                             @if (isCategoryOpen) {
@@ -79,7 +80,7 @@
                             <textarea class="form-textarea" [(ngModel)]="description" placeholder=""></textarea>
                             <button class="icon-trash-btn" type="button" (click)="clearDescription()"
                                 title="Delete description">
-                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                                <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
                         </div>
                     </div>
@@ -93,12 +94,15 @@
                         <h3 class="question-heading">{{ qIndex + 1 }}. Question</h3>
                         <button class="icon-trash-btn" type="button" (click)="removeQuestion(qIndex)"
                             title="Delete question">
-                            <img src="/icons/Delete.svg" alt="Delete-icon">
+                            <img src="icons/Delete.svg" alt="Delete-icon">
                         </button>
                     </div>
 
-                    <input type="text" class="form-input question-input" [(ngModel)]="question.text"
-                        placeholder="Which date would work best for you?">
+                    <div class="question-input-wrapper" style="position: relative;">
+                        <input type="text" class="form-input question-input" [(ngModel)]="question.text"
+                            placeholder="Which date would work best for you?" required pattern=".*\S.*" #qTextCtrl="ngModel">
+                        <span class="error-text" [class.visible]="qTextCtrl.invalid && qTextCtrl.touched">Question is required</span>
+                    </div>
 
                     <div class="answers-header-row">
                         <span class="answers-label">Answers</span>
@@ -110,13 +114,14 @@
 
                     <div class="answers-list">
                         @for (opt of question.options; track opt.key; let aIndex = $index) {
-                        <div class="answer-row">
+                        <div class="answer-row" style="position: relative;">
                             <span class="answer-key">{{ opt.key }}.</span>
-                            <input type="text" class="form-input answer-input" [(ngModel)]="opt.text" placeholder="">
+                            <input type="text" class="form-input answer-input" [(ngModel)]="opt.text" placeholder="" required pattern=".*\S.*" #aTextCtrl="ngModel">
                             <button class="icon-trash-btn" type="button" (click)="removeAnswer(question, aIndex)"
                                 title="Delete answer">
-                                <img src="/icons/Delete.svg" alt="Delete-icon">
+                                <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
+                            <span class="error-text" style="left: 32px;" [class.visible]="aTextCtrl.invalid && aTextCtrl.touched">Answer is required</span>
                         </div>
                         }
                     </div>
@@ -146,7 +151,7 @@
 
     @if (showPublishPopup) {
     <div class="publish-popup" [class.slide-in]="showPublishPopup">
-        <img src="/icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closePublishPopup()">
+        <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closePublishPopup()">
         <div class="popup-text">
             <span class="popup-subtitle">Your survey is now<br> published</span>
         </div>

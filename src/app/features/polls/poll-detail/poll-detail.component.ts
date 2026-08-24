@@ -17,6 +17,7 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   selectedOptions: { [questionId: number]: { [key: string]: boolean } } = {};
   originalPercentages: { [questionId: number]: { [key: string]: number } } = {};
   isSubmitted = false;
+  showCompletePopup = false;
 
   private deleteSubscriptionChannel: any;
 
@@ -97,7 +98,7 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   }
 
   toggleOption(questionId: number, key: string) {
-    if (this.isSubmitted) return;
+    if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
 
     if (!this.selectedOptions[questionId]) {
       this.selectedOptions[questionId] = {};
@@ -142,7 +143,12 @@ export class PollDetailComponent implements OnInit, OnDestroy {
     );
 
     if (hasSelection) {
-      this.router.navigate(['/polls']);
+      this.showCompletePopup = true;
     }
+  }
+
+  closeCompletePopup() {
+    this.showCompletePopup = false;
+    this.router.navigate(['/polls']);
   }
 }

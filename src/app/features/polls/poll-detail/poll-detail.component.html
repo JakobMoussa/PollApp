@@ -1,6 +1,6 @@
 <header class="header">
     <a routerLink="/polls" class="logo-link">
-        <img src="/icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
+        <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
     </a>
     <button class="create-survey-btn" routerLink="/polls/create">Create survey</button>
 </header>
@@ -35,10 +35,10 @@
 
                     <div class="options-list">
                         @for (opt of q.options; track opt.key) {
-                        <label class="option-item" (click)="toggleOption(q.id, opt.key)">
+                        <label class="option-item" [class.disabled-option]="poll.status === 'Past'" (click)="toggleOption(q.id, opt.key)">
                             <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
                                 @if (isSelected(q.id, opt.key)) {
-                                <img src="/icons/check.svg" alt="ckeck-icon">
+                                <img src="icons/check.svg" alt="ckeck-icon">
                                 }
                             </div>
                             <span class="option-text">
@@ -52,11 +52,11 @@
             </div>
 
             <div class="survey-card-footer">
-                <button class="complete-survey-btn" [class.completed]="isSubmitted" [disabled]="isSubmitted" (click)="completeSurvey()">
+                <button class="complete-survey-btn" [class.completed]="isSubmitted" [disabled]="isSubmitted || poll.status === 'Past'" (click)="completeSurvey()">
                     <span class="btn-text-desktop">{{ isSubmitted ? 'Survey Completed!' : 'Complete survey' }}</span>
                     <span class="btn-text-mobile">
                         {{ isSubmitted ? 'Completed' : 'Complete' }}
-                        <img src="/icons/check.svg" alt="check icon" class="check-icon">
+                        <img src="icons/check.svg" alt="check icon" class="check-icon">
                     </span>
                 </button>
             </div>
@@ -94,6 +94,15 @@
             </div>
             }
         </section>
+    </div>
+    }
+
+    @if (showCompletePopup) {
+    <div class="publish-popup" [class.slide-in]="showCompletePopup">
+        <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeCompletePopup()">
+        <div class="popup-text">
+            <span class="popup-subtitle">Your survey is now<br> completed</span>
+        </div>
     </div>
     }
 </main>

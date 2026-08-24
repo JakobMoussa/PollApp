@@ -32,7 +32,6 @@ export class PollCreateComponent {
   showPublishPopup: boolean = false;
 
   categories: string[] = [
-    'All Surveys',
     'Team Activities',
     'Health & Wellness',
     'Gaming & Entertainment',
@@ -45,16 +44,7 @@ export class PollCreateComponent {
   questions: Question[] = [
     {
       id: 1,
-      text: 'Which date would work best for you?',
-      allowMultiple: false,
-      options: [
-        { key: 'A', text: '' },
-        { key: 'B', text: '' }
-      ]
-    },
-    {
-      id: 2,
-      text: 'Choose the activities you prefer?',
+      text: '',
       allowMultiple: false,
       options: [
         { key: 'A', text: '' },
@@ -146,11 +136,16 @@ export class PollCreateComponent {
 
   isFormValid(): boolean {
     if (!this.surveyName || this.surveyName.trim() === '') return false;
-    if (!this.endDate || this.endDate.trim() === '') return false;
     if (!this.category || this.category.trim() === '') return false;
 
-    const hasValidQuestion = this.questions.some(q => q.text && q.text.trim() !== '');
-    if (!hasValidQuestion) return false;
+    if (this.questions.length === 0) return false;
+
+    for (const q of this.questions) {
+      if (!q.text || q.text.trim() === '') return false;
+      for (const opt of q.options) {
+        if (!opt.text || opt.text.trim() === '') return false;
+      }
+    }
 
     return true;
   }
