@@ -29,6 +29,8 @@ export class PollCreateComponent {
   category: string = '';
   description: string = '';
   isCategoryOpen: boolean = false;
+  isCategoryTouched: boolean = false;
+  submitted: boolean = false;
   showPublishPopup: boolean = false;
 
   @Output() closePopup = new EventEmitter<void>();
@@ -77,11 +79,20 @@ export class PollCreateComponent {
     event.stopPropagation();
     this.category = cat;
     this.isCategoryOpen = false;
+    this.isCategoryTouched = true;
   }
 
   toggleCategoryDropdown(event: Event) {
     event.stopPropagation();
     this.isCategoryOpen = !this.isCategoryOpen;
+    this.isCategoryTouched = true;
+  }
+
+  hasOtherFieldsFilled(): boolean {
+    if (this.surveyName && this.surveyName.trim() !== '') return true;
+    if (this.description && this.description.trim() !== '') return true;
+    if (this.questions.some(q => (q.text && q.text.trim() !== '') || q.options.some(o => o.text && o.text.trim() !== ''))) return true;
+    return false;
   }
 
   @HostListener('document:click')
@@ -157,6 +168,11 @@ export class PollCreateComponent {
   }
 
   async publishSurvey() {
+    this.submitted = true;
+    if (!this.isFormValid()) {
+      return;
+    }
+
     const allOptions = this.questions.flatMap(q =>
       q.options.map(o => o.text)
     );

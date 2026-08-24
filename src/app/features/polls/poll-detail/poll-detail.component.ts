@@ -138,6 +138,12 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   completeSurvey() {
     this.isSubmitted = true;
 
+    if (this.poll) {
+      this.poll.status = 'Past';
+      this.poll.badge = 'Ended';
+      this.pollService.markPollAsPast(this.poll.id);
+    }
+
     const hasSelection = Object.values(this.selectedOptions).some(options =>
       Object.values(options).some(isSelected => isSelected)
     );

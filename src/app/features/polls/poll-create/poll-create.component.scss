@@ -304,6 +304,12 @@
           padding: 0 6px;
           cursor: pointer;
           border: none;
+          transition: box-shadow 0.2s ease, border-radius 0.2s ease;
+
+          &.error-border {
+            box-shadow: 0 0 0 2px #FFCFA1;
+            border-radius: 7px;
+          }
 
           .dropdown-arrow {
             width: 14px;
@@ -367,6 +373,24 @@
           font-size: 14px;
           font-weight: 400;
           padding-left: 4px;
+        }
+
+        .error-text {
+          position: absolute;
+          bottom: -18px;
+          left: 6px;
+          font-size: 12.5px;
+          color: #FFCFA1;
+          font-weight: 500;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.2s ease, visibility 0.2s ease;
+          white-space: nowrap;
+
+          &.visible {
+            opacity: 1;
+            visibility: visible;
+          }
         }
       }
     }
@@ -610,15 +634,9 @@
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
 
-      &:hover:not(:disabled) {
+      &:hover {
         background-color: #FEB770;
         transform: translateY(-1px);
-      }
-
-      &:disabled {
-        background-color: #E0E0E0;
-        color: #9E9E9E;
-        cursor: not-allowed;
       }
     }
   }

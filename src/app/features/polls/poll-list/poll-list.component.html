@@ -72,6 +72,13 @@
             <p class="title">{{ poll.title }}</p>
             <p class="badge">{{ poll.badge }}</p>
         </button>
+        } @empty {
+        <div class="no-surveys-box">
+            <p class="no-surveys-title">No surveys found</p>
+            <p class="no-surveys-text">
+                There are currently no {{ activeTab === 'active' ? 'active' : 'past' }} surveys in {{ selectedCategory && selectedCategory !== 'All Surveys' ? '"' + selectedCategory + '"' : 'this category' }}.
+            </p>
+        </div>
         }
     </section>
     <footer></footer>

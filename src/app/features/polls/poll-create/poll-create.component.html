@@ -25,7 +25,7 @@
                                 <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
                             <span class="error-text"
-                                [class.visible]="surveyNameCtrl.invalid && surveyNameCtrl.touched">Survey name is
+                                [class.visible]="(surveyNameCtrl.invalid && surveyNameCtrl.touched) || (submitted && (!surveyName || !surveyName.trim()))">Survey name is
                                 required</span>
                         </div>
                     </div>
@@ -43,8 +43,8 @@
                             </div>
                         </div>
 
-                        <div class="category-wrapper">
-                            <button class="category-btn" type="button" (click)="toggleCategoryDropdown($event)">
+                        <div class="category-wrapper" style="position: relative;">
+                            <button class="category-btn" [class.error-border]="!category && (submitted || isCategoryTouched || hasOtherFieldsFilled())" type="button" (click)="toggleCategoryDropdown($event)">
                                 <span>Choose category</span>
                                 <img [src]="isCategoryOpen ? 'icons/drop_down.svg' : 'icons/arrow_drop_down.svg'"
                                     alt="drop Down" class="dropdown-arrow">
@@ -68,6 +68,8 @@
                                     title="Filter zurücksetzen"></span>
                             </div>
                             }
+                            <span class="error-text"
+                                [class.visible]="!category && (submitted || isCategoryTouched || hasOtherFieldsFilled())">Category is required</span>
                         </div>
                     </div>
                 </div>
@@ -101,7 +103,7 @@
                         <input type="text" class="form-input question-input" [(ngModel)]="question.text"
                             placeholder="Which date would work best for you?" required pattern=".*\S.*"
                             #qTextCtrl="ngModel">
-                        <span class="error-text" [class.visible]="qTextCtrl.invalid && qTextCtrl.touched">Question is
+                        <span class="error-text" [class.visible]="(qTextCtrl.invalid && qTextCtrl.touched) || (submitted && (!question.text || !question.text.trim()))">Question is
                             required</span>
                     </div>
 
@@ -124,7 +126,7 @@
                                 <img src="icons/Delete.svg" alt="Delete-icon">
                             </button>
                             <span class="error-text" style="left: 32px;"
-                                [class.visible]="aTextCtrl.invalid && aTextCtrl.touched">Answer is required</span>
+                                [class.visible]="(aTextCtrl.invalid && aTextCtrl.touched) || (submitted && (!opt.text || !opt.text.trim()))">Answer is required</span>
                         </div>
                         }
                     </div>
@@ -148,7 +150,7 @@
         </div>
 
         <div class="card-footer">
-            <button class="publish-btn" type="button" [disabled]="!isFormValid()"
+            <button class="publish-btn" type="button"
                 (click)="publishSurvey()">Publish</button>
         </div>
     </div>

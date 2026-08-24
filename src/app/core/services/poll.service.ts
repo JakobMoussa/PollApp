@@ -13,7 +13,7 @@ export class PollService {
       id: '1',
       title: "Let's Plan the Next Team Event Together",
       category: "Team Activities",
-      endsOn: "01.09.2025",
+      endsOn: "29.08.2026",
       badge: "Ends in 1 Day",
       status: "Published",
       isEndingSoon: true,
@@ -25,10 +25,10 @@ export class PollService {
           text: "Which date would work best for you?",
           subtitle: "More than one answers are possible.",
           options: [
-            { key: 'A', text: '19.09.2025, Friday', percentage: 27 },
-            { key: 'B', text: '10.10.2025, Friday', percentage: 44 },
-            { key: 'C', text: '11.10.2025, Saturday', percentage: 3 },
-            { key: 'D', text: '31.10.2025, Friday', percentage: 26 }
+            { key: 'A', text: '19.08.2026, Friday', percentage: 27 },
+            { key: 'B', text: '24.08.2026, Friday', percentage: 44 },
+            { key: 'C', text: '26.08.2026, Saturday', percentage: 3 },
+            { key: 'D', text: '31.08.2026, Friday', percentage: 26 }
           ]
         },
         {
@@ -373,6 +373,8 @@ export class PollService {
     }
   ];
 
+  private completedPollIds: string[] = [];
+
   getPolls(): Poll[] {
     return this.polls;
   }
@@ -387,6 +389,18 @@ export class PollService {
 
   getPollById(id: string): Poll | undefined {
     return this.polls.find(p => p.id === id);
+  }
+
+  markPollAsPast(pollId: string): void {
+    const poll = this.polls.find(p => p.id === pollId);
+    if (poll) {
+      poll.status = 'Past';
+      poll.badge = 'Ended';
+      poll.isEndingSoon = false;
+    }
+    if (!this.completedPollIds.includes(pollId)) {
+      this.completedPollIds.push(pollId);
+    }
   }
 
   async savePollToSupabase(pollData: {
@@ -438,13 +452,14 @@ export class PollService {
       if (desc.includes('|||JSON|||')) {
         desc = desc.split('|||JSON|||')[0];
       }
+      const isPast = this.completedPollIds.includes(p.id);
       return {
         id: p.id,
         title: p.title,
         category: p.category ?? 'Allgemein',
         endsOn: '',
-        badge: 'Neu',
-        status: 'Published',
+        badge: isPast ? 'Ended' : 'Neu',
+        status: isPast ? 'Past' : 'Published',
         description: desc,
         isEndingSoon: false,
         questions: []
