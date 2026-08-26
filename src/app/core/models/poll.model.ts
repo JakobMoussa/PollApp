@@ -9,6 +9,7 @@ export interface Question {
   number: number;
   text: string;
   subtitle?: string;
+  allowMultiple?: boolean;
   options: Option[];
 }
 

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { PollService } from '../../../core/services/poll.service';
-import { Poll } from '../../../core/models/poll.model';
+import { Poll, Question } from '../../../core/models/poll.model';
 
 @Component({
   selector: 'app-poll-detail',
@@ -18,6 +18,8 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   originalPercentages: { [questionId: number]: { [key: string]: number } } = {};
   isSubmitted = false;
   showCompletePopup = false;
+  submittedAttempted = false;
+  showMissingPopup = false;
 
   private deleteSubscriptionChannel: any;
 
@@ -54,6 +56,9 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   private setupPollData() {
     this.selectedOptions = {};
     this.isSubmitted = false;
+    this.submittedAttempted = false;
+    this.showMissingPopup = false;
+    this.showCompletePopup = false;
 
     if (this.poll && this.poll.questions) {
       this.poll.questions.forEach(q => {
@@ -97,15 +102,49 @@ export class PollDetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  isMultipleChoice(question: Question): boolean {
+    if (question.allowMultiple !== undefined) {
+      return question.allowMultiple;
+    }
+    return !!(question.subtitle && question.subtitle.toLowerCase().includes('more than one'));
+  }
+
+  isQuestionAnswered(questionId: number): boolean {
+    const options = this.selectedOptions[questionId];
+    if (!options) return false;
+    return Object.values(options).some(isSelected => isSelected === true);
+  }
+
+  get unansweredQuestions(): Question[] {
+    if (!this.poll || !this.poll.questions) return [];
+    return this.poll.questions.filter(q => !this.isQuestionAnswered(q.id));
+  }
+
   toggleOption(questionId: number, key: string) {
     if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
+
+    const question = this.poll?.questions?.find(q => q.id === questionId);
+    const allowMultiple = question ? this.isMultipleChoice(question) : true;
 
     if (!this.selectedOptions[questionId]) {
       this.selectedOptions[questionId] = {};
     }
-    this.selectedOptions[questionId][key] = !this.selectedOptions[questionId][key];
+
+    const currentState = !!this.selectedOptions[questionId][key];
+
+    if (allowMultiple) {
+      this.selectedOptions[questionId][key] = !currentState;
+    } else {
+      this.selectedOptions[questionId] = {
+        [key]: !currentState
+      };
+    }
 
     this.recalculatePercentages(questionId);
+
+    if (this.showMissingPopup && this.unansweredQuestions.length === 0) {
+      this.showMissingPopup = false;
+    }
   }
 
   recalculatePercentages(questionId: number) {
@@ -136,6 +175,16 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   }
 
   completeSurvey() {
+    if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
+
+    if (this.unansweredQuestions.length > 0) {
+      this.submittedAttempted = true;
+      this.showMissingPopup = true;
+      return;
+    }
+
+    this.submittedAttempted = false;
+    this.showMissingPopup = false;
     this.isSubmitted = true;
 
     if (this.poll) {
@@ -144,13 +193,11 @@ export class PollDetailComponent implements OnInit, OnDestroy {
       this.pollService.markPollAsPast(this.poll.id);
     }
 
-    const hasSelection = Object.values(this.selectedOptions).some(options =>
-      Object.values(options).some(isSelected => isSelected)
-    );
+    this.showCompletePopup = true;
+  }
 
-    if (hasSelection) {
-      this.showCompletePopup = true;
-    }
+  closeMissingPopup() {
+    this.showMissingPopup = false;
   }
 
   closeCompletePopup() {

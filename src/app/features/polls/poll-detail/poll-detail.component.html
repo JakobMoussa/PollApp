@@ -18,7 +18,8 @@
             </div>
 
             <h1 class="survey-title">
-                {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix }}
+                {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix
+                }}
             </h1>
 
             <p class="survey-description">
@@ -27,15 +28,19 @@
 
             <div class="questions-grid">
                 @for (q of poll.questions; track q.id) {
-                <div class="question-block">
+                <div class="question-block" [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
                     <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
                     @if (q.subtitle) {
                     <p class="question-subtitle">{{ q.subtitle }}</p>
                     }
+                    @if (submittedAttempted && !isQuestionAnswered(q.id)) {
+                    <p class="required-error-text">Please answer this question</p>
+                    }
 
                     <div class="options-list">
                         @for (opt of q.options; track opt.key) {
-                        <label class="option-item" [class.disabled-option]="poll.status === 'Past'" (click)="toggleOption(q.id, opt.key)">
+                        <label class="option-item" [class.disabled-option]="poll.status === 'Past'"
+                            (click)="toggleOption(q.id, opt.key)">
                             <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
                                 @if (isSelected(q.id, opt.key)) {
                                 <img src="icons/check.svg" alt="ckeck-icon">
@@ -52,10 +57,14 @@
             </div>
 
             <div class="survey-card-footer">
-                <button class="complete-survey-btn" [class.completed]="isSubmitted" [disabled]="isSubmitted || poll.status === 'Past'" (click)="completeSurvey()">
-                    <span class="btn-text-desktop">{{ isSubmitted ? 'Survey Completed!' : 'Complete survey' }}</span>
+                @if (submittedAttempted && unansweredQuestions.length > 0) {
+                <span class="footer-error-msg">Please answer all questions</span>
+                }
+                <button class="complete-survey-btn" [class.completed]="isSubmitted"
+                    [disabled]="isSubmitted || poll.status === 'Past'" (click)="completeSurvey()">
+                    <span class="btn-text-desktop">{{ (isSubmitted || poll.status === 'Past') ? 'Survey Completed!' : 'Complete survey' }}</span>
                     <span class="btn-text-mobile">
-                        {{ isSubmitted ? 'Completed' : 'Complete' }}
+                        {{ (isSubmitted || poll.status === 'Past') ? 'Completed' : 'Complete' }}
                         <img src="icons/check.svg" alt="check icon" class="check-icon">
                     </span>
                 </button>
@@ -88,7 +97,8 @@
                 }
             </div>
             } @else {
-            <div class="no-results-message" style="color: #666; font-size: 0.95rem; margin-top: 1rem; line-height: 1.5;">
+            <div class="no-results-message"
+                style="color: #666; font-size: 0.95rem; margin-top: 1rem; line-height: 1.5;">
                 <p>Results will be shown here after participants complete the survey.</p>
                 <p style="margin-top: 0.5rem;">There are no answears yet.</p>
             </div>
@@ -102,6 +112,16 @@
         <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeCompletePopup()">
         <div class="popup-text">
             <span class="popup-subtitle">Your survey is now<br> completed</span>
+        </div>
+    </div>
+    }
+
+    @if (showMissingPopup) {
+    <div class="publish-popup missing-popup" [class.slide-in]="showMissingPopup">
+        <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeMissingPopup()">
+        <div class="popup-text">
+            <span class="popup-title">Answers missing!</span>
+            <span class="popup-subtitle">Please answer all questions<br>to complete the survey</span>
         </div>
     </div>
     }

@@ -1,7 +1,7 @@
 import { Component, HostListener, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { PollService } from '../../../core/services/poll.service';
 
 export interface AnswerOption {
@@ -19,7 +19,7 @@ export interface Question {
 @Component({
   selector: 'app-poll-create',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './poll-create.component.html',
   styleUrl: './poll-create.component.scss'
 })

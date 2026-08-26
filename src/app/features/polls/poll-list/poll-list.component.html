@@ -35,13 +35,15 @@
 
     <nav class="filter-row">
         <ul>
-            <button [class.active]="activeTab === 'active'" [class.inactive]="activeTab !== 'active'" (click)="setActiveTab('active')">Active survey</button>
-            <button [class.active]="activeTab === 'inactive'" [class.inactive]="activeTab !== 'inactive'" (click)="setActiveTab('inactive')">Past survey</button>
+            <button [class.active]="activeTab === 'active'" [class.inactive]="activeTab !== 'active'"
+                (click)="setActiveTab('active')">Active survey</button>
+            <button [class.active]="activeTab === 'inactive'" [class.inactive]="activeTab !== 'inactive'"
+                (click)="setActiveTab('inactive')">Past survey</button>
         </ul>
         <div class="dropdown-wrapper">
             <button class="sort" (click)="toggleDropdown($event)">
                 Sort by categories
-                <img [src]="isDropdownOpen ? '/icons/drop_down.svg' : '/icons/arrow_drop_down.svg'" alt="drop Down">
+                <img [src]="isDropdownOpen ? 'icons/drop_down.svg' : 'icons/arrow_drop_down.svg'" alt="drop Down">
             </button>
             @if (isDropdownOpen) {
             <div class="dropdown-menu">
@@ -76,7 +78,8 @@
         <div class="no-surveys-box">
             <p class="no-surveys-title">No surveys found</p>
             <p class="no-surveys-text">
-                There are currently no {{ activeTab === 'active' ? 'active' : 'past' }} surveys in {{ selectedCategory && selectedCategory !== 'All Surveys' ? '"' + selectedCategory + '"' : 'this category' }}.
+                There are currently no {{ activeTab === 'active' ? 'active' : 'past' }} surveys in {{ selectedCategory
+                && selectedCategory !== 'All Surveys' ? '"' + selectedCategory + '"' : 'this category' }}.
             </p>
         </div>
         }
