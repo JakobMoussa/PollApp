@@ -22,7 +22,7 @@
         <h2>Ending soon surveys</h2>
         <div class="cards">
             @for (poll of endingSoonPolls; track poll.id) {
-            <button [routerLink]="['/polls', poll.id]">
+            <button (click)="openDetailPopup(poll.id)">
                 <div>
                     <p class="category">{{ poll.category }}</p>
                     <p class="title">{{ poll.title }}</p>
@@ -69,7 +69,7 @@
 
     <section class="grid">
         @for (poll of filteredGridPolls; track poll.id) {
-        <button [routerLink]="['/polls', poll.id]">
+        <button (click)="openDetailPopup(poll.id)">
             <p class="category">{{ poll.category }}</p>
             <p class="title">{{ poll.title }}</p>
             <p class="badge">{{ poll.badge }}</p>
@@ -88,5 +88,9 @@
 </main>
 
 @if (isCreatePopupOpen) {
-<app-poll-create (closePopup)="closeCreatePopup()"></app-poll-create>
+<app-poll-create (closePopup)="closeCreatePopup()" (surveyCreated)="onSurveyCreated($event)"></app-poll-create>
+}
+
+@if (selectedPollId) {
+<app-poll-detail [pollId]="selectedPollId" (closeDetail)="closeDetailPopup()" (openCreate)="switchToCreateModal()"></app-poll-detail>
 }

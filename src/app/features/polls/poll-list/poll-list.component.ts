@@ -1,20 +1,21 @@
 import { Component, HostListener, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PollService } from '../../../core/services/poll.service';
 import { Poll } from '../../../core/models/poll.model';
 import { PollCreateComponent } from '../poll-create/poll-create.component';
+import { PollDetailComponent } from '../poll-detail/poll-detail.component';
 
 @Component({
   selector: 'app-poll-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, PollCreateComponent],
+  imports: [CommonModule, PollCreateComponent, PollDetailComponent],
   templateUrl: './poll-list.component.html',
   styleUrl: './poll-list.component.scss'
 })
 export class PollListComponent implements OnInit, OnDestroy {
   isDropdownOpen = false;
   isCreatePopupOpen = false;
+  selectedPollId: string | null = null;
   selectedCategory = 'All Surveys';
   activeTab: 'active' | 'inactive' = 'active';
 
@@ -98,5 +99,26 @@ export class PollListComponent implements OnInit, OnDestroy {
 
   closeCreatePopup() {
     this.isCreatePopupOpen = false;
+  }
+
+  async onSurveyCreated(pollId: string) {
+    this.isCreatePopupOpen = false;
+    const supabasePolls = await this.pollService.loadPollsFromSupabase();
+    this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
+    this.selectedPollId = pollId;
+    this.cdr.markForCheck();
+  }
+
+  openDetailPopup(pollId: string) {
+    this.selectedPollId = pollId;
+  }
+
+  closeDetailPopup() {
+    this.selectedPollId = null;
+  }
+
+  switchToCreateModal() {
+    this.selectedPollId = null;
+    this.isCreatePopupOpen = true;
   }
 }

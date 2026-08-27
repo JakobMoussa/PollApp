@@ -1,5 +1,5 @@
-<div class="poll-create-overlay">
-<main class="poll-create-container">
+<div class="poll-create-overlay" (click)="onCancel()">
+<main class="poll-create-container" (click)="$event.stopPropagation()">
     <div class="outer-card">
         <div class="card-top-header">
             <div class="badge-and-title">
@@ -35,7 +35,7 @@
                             <label class="field-label">Set end date <span class="optional">(optional)</span></label>
                             <div class="input-with-trash">
                                 <input type="text" class="form-input" [(ngModel)]="endDate" placeholder=""
-                                    onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
+                                    [min]="minDate" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'">
                                 <button class="icon-trash-btn" type="button" (click)="clearEndDate()"
                                     title="Delete end date">
                                     <img src="icons/Delete.svg" alt="Delete-icon">
@@ -44,7 +44,7 @@
                         </div>
 
                         <div class="category-wrapper" style="position: relative;">
-                            <button class="category-btn" [class.error-border]="!category && (submitted || isCategoryTouched || hasOtherFieldsFilled())" type="button" (click)="toggleCategoryDropdown($event)">
+                            <button class="category-btn" [class.error-border]="!category && (submitted || isCategoryTouched)" type="button" (click)="toggleCategoryDropdown($event)">
                                 <span>Choose category</span>
                                 <img [src]="isCategoryOpen ? 'icons/drop_down.svg' : 'icons/arrow_drop_down.svg'"
                                     alt="drop Down" class="dropdown-arrow">
@@ -69,7 +69,7 @@
                             </div>
                             }
                             <span class="error-text"
-                                [class.visible]="!category && (submitted || isCategoryTouched || hasOtherFieldsFilled())">Category is required</span>
+                                [class.visible]="!category && (submitted || isCategoryTouched)">Category is required</span>
                         </div>
                     </div>
                 </div>

@@ -1,18 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { PollService } from '../../../core/services/poll.service';
 import { Poll, Question } from '../../../core/models/poll.model';
 
 @Component({
   selector: 'app-poll-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './poll-detail.component.html',
   styleUrl: './poll-detail.component.scss'
 })
-export class PollDetailComponent implements OnInit, OnDestroy {
+export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
+  @Input() pollId: string | null = null;
+  @Output() closeDetail = new EventEmitter<void>();
+  @Output() openCreate = new EventEmitter<void>();
+
   poll!: Poll;
   selectedOptions: { [questionId: number]: { [key: string]: boolean } } = {};
   originalPercentages: { [questionId: number]: { [key: string]: number } } = {};
@@ -24,32 +27,38 @@ export class PollDetailComponent implements OnInit, OnDestroy {
   private deleteSubscriptionChannel: any;
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
     private pollService: PollService
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(async params => {
-      const pollId = params.get('id') || '1';
-      let loadedPoll = this.pollService.getPollById(pollId);
-      
-      if (!loadedPoll) {
-        loadedPoll = await this.pollService.getPollByIdFromSupabase(pollId) || this.pollService.getPolls()[0];
-      }
-      
-      this.poll = loadedPoll;
-      this.setupPollData();
+    this.loadPoll();
+  }
 
-      if (this.deleteSubscriptionChannel) {
-        this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
-      }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['pollId']) {
+      this.loadPoll();
+    }
+  }
 
-      this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
-        if (this.poll && this.poll.id === deletedId) {
-          this.router.navigate(['/polls']);
-        }
-      });
+  async loadPoll() {
+    const idToLoad = this.pollId || '1';
+    let loadedPoll = this.pollService.getPollById(idToLoad);
+    
+    if (!loadedPoll) {
+      loadedPoll = await this.pollService.getPollByIdFromSupabase(idToLoad) || this.pollService.getPolls()[0];
+    }
+    
+    this.poll = loadedPoll;
+    this.setupPollData();
+
+    if (this.deleteSubscriptionChannel) {
+      this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
+    }
+
+    this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
+      if (this.poll && this.poll.id === deletedId) {
+        this.closeModal();
+      }
     });
   }
 
@@ -120,6 +129,20 @@ export class PollDetailComponent implements OnInit, OnDestroy {
     return this.poll.questions.filter(q => !this.isQuestionAnswered(q.id));
   }
 
+  get areAllQuestionsAnswered(): boolean {
+    if (!this.poll || !this.poll.questions || this.poll.questions.length === 0) return false;
+    return this.poll.questions.every(q => this.isQuestionAnswered(q.id));
+  }
+
+  get totalQuestionsCount(): number {
+    return this.poll?.questions?.length || 0;
+  }
+
+  get answeredQuestionsCount(): number {
+    if (!this.poll || !this.poll.questions) return 0;
+    return this.poll.questions.filter(q => this.isQuestionAnswered(q.id)).length;
+  }
+
   toggleOption(questionId: number, key: string) {
     if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
 
@@ -158,16 +181,35 @@ export class PollDetailComponent implements OnInit, OnDestroy {
       });
     }
 
-    const voteWeight = 10;
-    const totalOriginalVotes = 100;
-    const newTotalVotes = totalOriginalVotes + (userVotesCount * voteWeight);
+    const originalSum = question.options.reduce((sum, opt) => {
+      return sum + (this.originalPercentages[questionId]?.[opt.key] || 0);
+    }, 0);
 
-    question.options.forEach(opt => {
-      const originalVote = this.originalPercentages[questionId][opt.key];
-      const userVote = this.selectedOptions[questionId]?.[opt.key] ? voteWeight : 0;
+    const hasOriginalVotes = originalSum > 0;
 
-      opt.percentage = Math.round(((originalVote + userVote) / newTotalVotes) * 100);
-    });
+    if (hasOriginalVotes) {
+      const voteWeight = 10;
+      const totalOriginalVotes = 100;
+      const newTotalVotes = totalOriginalVotes + (userVotesCount * voteWeight);
+
+      question.options.forEach(opt => {
+        const originalVote = this.originalPercentages[questionId][opt.key] || 0;
+        const userVote = this.selectedOptions[questionId]?.[opt.key] ? voteWeight : 0;
+
+        opt.percentage = Math.round(((originalVote + userVote) / newTotalVotes) * 100);
+      });
+    } else {
+      if (userVotesCount === 0) {
+        question.options.forEach(opt => {
+          opt.percentage = 0;
+        });
+      } else {
+        question.options.forEach(opt => {
+          const isSelected = !!this.selectedOptions[questionId]?.[opt.key];
+          opt.percentage = isSelected ? Math.round((1 / userVotesCount) * 100) : 0;
+        });
+      }
+    }
   }
 
   isSelected(questionId: number, key: string): boolean {
@@ -200,8 +242,16 @@ export class PollDetailComponent implements OnInit, OnDestroy {
     this.showMissingPopup = false;
   }
 
+  closeModal() {
+    this.closeDetail.emit();
+  }
+
+  openCreateFromHeader() {
+    this.openCreate.emit();
+  }
+
   closeCompletePopup() {
     this.showCompletePopup = false;
-    this.router.navigate(['/polls']);
+    this.closeDetail.emit();
   }
 }

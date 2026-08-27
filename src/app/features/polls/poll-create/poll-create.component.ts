@@ -32,8 +32,18 @@ export class PollCreateComponent {
   isCategoryTouched: boolean = false;
   submitted: boolean = false;
   showPublishPopup: boolean = false;
+  createdPollId: string | null = null;
 
   @Output() closePopup = new EventEmitter<void>();
+  @Output() surveyCreated = new EventEmitter<string>();
+
+  get minDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   categories: string[] = [
     'Team Activities',
@@ -148,12 +158,17 @@ export class PollCreateComponent {
 
   closePublishPopup() {
     this.showPublishPopup = false;
-    this.closePopup.emit();
+    if (this.createdPollId) {
+      this.surveyCreated.emit(this.createdPollId);
+    } else {
+      this.closePopup.emit();
+    }
   }
 
   isFormValid(): boolean {
     if (!this.surveyName || this.surveyName.trim() === '') return false;
     if (!this.category || this.category.trim() === '') return false;
+    if (this.endDate && this.endDate < this.minDate) return false;
 
     if (this.questions.length === 0) return false;
 
@@ -185,6 +200,7 @@ export class PollCreateComponent {
     });
 
     if (savedId) {
+      this.createdPollId = savedId;
       this.showPublishPopup = true;
     } else {
       console.error('Poll could not be saved to Supabase.');

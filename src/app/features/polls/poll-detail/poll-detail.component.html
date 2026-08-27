@@ -1,128 +1,142 @@
-<header class="header">
-    <a routerLink="/polls" class="logo-link">
-        <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
-    </a>
-    <button class="create-survey-btn" routerLink="/polls/create">Create survey</button>
-</header>
+<div class="poll-detail-overlay">
+    <header class="header">
+        <a (click)="closeModal()" class="logo-link" style="cursor: pointer;">
+            <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
+        </a>
+        <button class="create-survey-btn" (click)="openCreateFromHeader()">Create survey</button>
+    </header>
 
-<main class="poll-detail-container">
-    @if (poll) {
-    <div class="poll-layout">
-        <section class="survey-card">
-            <div class="meta-row">
-                <span class="status-badge">{{ poll.status }}</span>
-                <div class="meta-info">
-                    <span class="ends-date">Ends on {{ poll.endsOn }}</span>
-                    <span class="category-info">Category: <strong>{{ poll.category }}</strong></span>
-                </div>
-            </div>
-
-            <h1 class="survey-title">
-                {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix
-                }}
-            </h1>
-
-            <p class="survey-description">
-                {{ poll.description }}
-            </p>
-
-            <div class="questions-grid">
-                @for (q of poll.questions; track q.id) {
-                <div class="question-block" [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
-                    <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
-                    @if (q.subtitle) {
-                    <p class="question-subtitle">{{ q.subtitle }}</p>
-                    }
-                    @if (submittedAttempted && !isQuestionAnswered(q.id)) {
-                    <p class="required-error-text">Please answer this question</p>
-                    }
-
-                    <div class="options-list">
-                        @for (opt of q.options; track opt.key) {
-                        <label class="option-item" [class.disabled-option]="poll.status === 'Past'"
-                            (click)="toggleOption(q.id, opt.key)">
-                            <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
-                                @if (isSelected(q.id, opt.key)) {
-                                <img src="icons/check.svg" alt="ckeck-icon">
-                                }
-                            </div>
-                            <span class="option-text">
-                                <strong>{{ opt.key }}.</strong> {{ opt.text }}
-                            </span>
-                        </label>
-                        }
+    <main class="poll-detail-container">
+        @if (poll) {
+        <div class="poll-layout">
+            <section class="survey-card">
+                <div class="meta-row">
+                    <span class="status-badge">{{ poll.status }}</span>
+                    <div class="meta-info">
+                        <span class="ends-date">Ends on {{ poll.endsOn }}</span>
+                        <span class="category-info">Category: <strong>{{ poll.category }}</strong></span>
                     </div>
                 </div>
-                }
-            </div>
 
-            <div class="survey-card-footer">
-                @if (submittedAttempted && unansweredQuestions.length > 0) {
-                <span class="footer-error-msg">Please answer all questions</span>
-                }
-                <button class="complete-survey-btn" [class.completed]="isSubmitted"
-                    [disabled]="isSubmitted || poll.status === 'Past'" (click)="completeSurvey()">
-                    <span class="btn-text-desktop">{{ (isSubmitted || poll.status === 'Past') ? 'Survey Completed!' : 'Complete survey' }}</span>
-                    <span class="btn-text-mobile">
-                        {{ (isSubmitted || poll.status === 'Past') ? 'Completed' : 'Complete' }}
-                        <img src="icons/check.svg" alt="check icon" class="check-icon">
-                    </span>
-                </button>
-            </div>
-        </section>
+                <h1 class="survey-title">
+                    {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix
+                    }}
+                </h1>
 
-        <section class="results-card">
-            <h2 class="results-title">
-                Survey results <span class="live-badge">LIVE</span>
-            </h2>
+                <p class="survey-description">
+                    {{ poll.description }}
+                </p>
 
-            @if (hasResults) {
-            <div class="results-list">
-                @for (q of poll.questions; track q.id) {
-                <div class="result-question">
-                    <h4 class="result-question-title">{{ q.number }}. {{ q.text }}</h4>
-
-                    <div class="result-options">
-                        @for (opt of q.options; track opt.key) {
-                        <div class="result-row">
-                            <span class="opt-key">{{ opt.key }}</span>
-                            <div class="progress-bar-track">
-                                <div class="progress-bar-fill" [style.width.%]="opt.percentage"></div>
-                            </div>
-                            <span class="opt-percentage">{{ opt.percentage }}%</span>
+                <div class="questions-grid">
+                    @for (q of poll.questions; track q.id) {
+                    <div class="question-block" [class.unanswered]="!isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted"
+                        [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
+                        <div class="question-header-row">
+                            <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
+                            @if (!isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted) {
+                            <span class="required-badge">Required</span>
+                            } @else if (isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted) {
+                            <span class="answered-badge">✓ Answered</span>
+                            }
                         </div>
+                        @if (q.subtitle) {
+                        <p class="question-subtitle">{{ q.subtitle }}</p>
                         }
+                        @if (submittedAttempted && !isQuestionAnswered(q.id)) {
+                        <p class="required-error-text">Please answer this question</p>
+                        }
+
+                        <div class="options-list">
+                            @for (opt of q.options; track opt.key) {
+                            <label class="option-item" [class.disabled-option]="poll.status === 'Past' || isSubmitted"
+                                (click)="toggleOption(q.id, opt.key)">
+                                <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
+                                    @if (isSelected(q.id, opt.key)) {
+                                    <img src="icons/check.svg" alt="ckeck-icon">
+                                    }
+                                </div>
+                                <span class="option-text">
+                                    <strong>{{ opt.key }}.</strong> {{ opt.text }}
+                                </span>
+                            </label>
+                            }
+                        </div>
                     </div>
+                    }
+                </div>
+
+                <div class="survey-card-footer">
+                    @if (!isSubmitted && poll.status !== 'Past') {
+                    <div class="validation-progress-info">
+                        <span class="progress-text" [class.ready]="areAllQuestionsAnswered">
+                            {{ answeredQuestionsCount }} of {{ totalQuestionsCount }} questions answered
+                        </span>
+                    </div>
+                    }
+                    <button class="complete-survey-btn" [class.completed]="isSubmitted"
+                        [disabled]="isSubmitted || poll.status === 'Past' || !areAllQuestionsAnswered" (click)="completeSurvey()">
+                        <span class="btn-text-desktop">{{ (isSubmitted || poll.status === 'Past') ? 'Survey Completed!' : 'Complete survey' }}</span>
+                        <span class="btn-text-mobile">
+                            {{ (isSubmitted || poll.status === 'Past') ? 'Completed' : 'Complete' }}
+                            <img src="icons/check.svg" alt="check icon" class="check-icon">
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="results-card">
+                <h2 class="results-title">
+                    Survey results <span class="live-badge">LIVE</span>
+                </h2>
+
+                @if (hasResults) {
+                <div class="results-list">
+                    @for (q of poll.questions; track q.id) {
+                    <div class="result-question">
+                        <h4 class="result-question-title">{{ q.number }}. {{ q.text }}</h4>
+
+                        <div class="result-options">
+                            @for (opt of q.options; track opt.key) {
+                            <div class="result-row">
+                                <span class="opt-key">{{ opt.key }}</span>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill" [style.width.%]="opt.percentage"></div>
+                                </div>
+                                <span class="opt-percentage">{{ opt.percentage }}%</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <div class="no-results-message"
+                    style="color: #666; font-size: 0.95rem; margin-top: 1rem; line-height: 1.5;">
+                    <p>Results will be shown here after participants complete the survey.</p>
+                    <p style="margin-top: 0.5rem;">There are no answears yet.</p>
                 </div>
                 }
-            </div>
-            } @else {
-            <div class="no-results-message"
-                style="color: #666; font-size: 0.95rem; margin-top: 1rem; line-height: 1.5;">
-                <p>Results will be shown here after participants complete the survey.</p>
-                <p style="margin-top: 0.5rem;">There are no answears yet.</p>
-            </div>
-            }
-        </section>
-    </div>
-    }
-
-    @if (showCompletePopup) {
-    <div class="publish-popup" [class.slide-in]="showCompletePopup">
-        <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeCompletePopup()">
-        <div class="popup-text">
-            <span class="popup-subtitle">Your survey is now<br> completed</span>
+            </section>
         </div>
-    </div>
-    }
+        }
 
-    @if (showMissingPopup) {
-    <div class="publish-popup missing-popup" [class.slide-in]="showMissingPopup">
-        <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeMissingPopup()">
-        <div class="popup-text">
-            <span class="popup-title">Answers missing!</span>
-            <span class="popup-subtitle">Please answer all questions<br>to complete the survey</span>
+        @if (showCompletePopup) {
+        <div class="publish-popup" [class.slide-in]="showCompletePopup">
+            <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeCompletePopup()">
+            <div class="popup-text">
+                <span class="popup-subtitle">Your survey is now<br> completed</span>
+            </div>
         </div>
-    </div>
-    }
-</main>
+        }
+
+        @if (showMissingPopup) {
+        <div class="publish-popup missing-popup" [class.slide-in]="showMissingPopup">
+            <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeMissingPopup()">
+            <div class="popup-text">
+                <span class="popup-title">Answers missing!</span>
+                <span class="popup-subtitle">Please answer all questions<br>to complete the survey</span>
+            </div>
+        </div>
+        }
+    </main>
+</div>
