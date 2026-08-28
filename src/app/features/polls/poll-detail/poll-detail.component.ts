@@ -23,6 +23,7 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
   showCompletePopup = false;
   submittedAttempted = false;
   showMissingPopup = false;
+  showAlreadyCompletedPopup = false;
 
   private deleteSubscriptionChannel: any;
 
@@ -41,6 +42,7 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async loadPoll() {
+    this.revertUnsavedChanges();
     const idToLoad = this.pollId || '1';
     let loadedPoll = this.pollService.getPollById(idToLoad);
     
@@ -68,6 +70,15 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
     this.submittedAttempted = false;
     this.showMissingPopup = false;
     this.showCompletePopup = false;
+    this.showAlreadyCompletedPopup = false;
+
+    if (this.poll && this.poll.id && this.pollService.isPollCompleted(this.poll.id)) {
+      this.isSubmitted = true;
+      this.showAlreadyCompletedPopup = true;
+      setTimeout(() => {
+        this.showAlreadyCompletedPopup = false;
+      }, 6000);
+    }
 
     if (this.poll && this.poll.questions) {
       this.poll.questions.forEach(q => {
@@ -80,6 +91,7 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.revertUnsavedChanges();
     if (this.deleteSubscriptionChannel) {
       this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
     }
@@ -144,7 +156,7 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleOption(questionId: number, key: string) {
-    if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
+    if (this.isSubmitted || (this.poll && this.isPollEnded)) return;
 
     const question = this.poll?.questions?.find(q => q.id === questionId);
     const allowMultiple = question ? this.isMultipleChoice(question) : true;
@@ -216,12 +228,20 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
     return !!(this.selectedOptions[questionId] && this.selectedOptions[questionId][key]);
   }
 
+  get isPollEnded(): boolean {
+    if (!this.poll) return false;
+    return this.pollService.isPollPast(this.poll);
+  }
+
   completeSurvey() {
-    if (this.isSubmitted || (this.poll && this.poll.status === 'Past')) return;
+    if (this.isSubmitted || (this.poll && this.isPollEnded)) return;
 
     if (this.unansweredQuestions.length > 0) {
       this.submittedAttempted = true;
       this.showMissingPopup = true;
+      setTimeout(() => {
+        this.showMissingPopup = false;
+      }, 6000);
       return;
     }
 
@@ -230,19 +250,40 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
     this.isSubmitted = true;
 
     if (this.poll) {
-      this.poll.status = 'Past';
-      this.poll.badge = 'Ended';
-      this.pollService.markPollAsPast(this.poll.id);
+      this.pollService.markPollAsCompleted(this.poll.id);
     }
 
     this.showCompletePopup = true;
+    setTimeout(() => {
+      this.showCompletePopup = false;
+    }, 6000);
   }
 
   closeMissingPopup() {
     this.showMissingPopup = false;
   }
 
+  closeAlreadyCompletedPopup() {
+    this.showAlreadyCompletedPopup = false;
+  }
+
+  private revertUnsavedChanges() {
+    if (!this.isSubmitted && this.poll && this.poll.questions) {
+      this.poll.questions.forEach(q => {
+        if (this.originalPercentages[q.id]) {
+          q.options.forEach(opt => {
+            if (this.originalPercentages[q.id][opt.key] !== undefined) {
+              opt.percentage = this.originalPercentages[q.id][opt.key];
+            }
+          });
+        }
+      });
+      this.selectedOptions = {};
+    }
+  }
+
   closeModal() {
+    this.revertUnsavedChanges();
     this.closeDetail.emit();
   }
 

@@ -238,7 +238,7 @@ export class PollService {
       id: '5',
       title: "Work-Life Balance & Hybrid Office",
       category: "Lifestyle & Preferences",
-      endsOn: "06.09.6",
+      endsOn: "06.09.2026",
       badge: "Ends in 2 Days",
       status: "Published",
       isEndingSoon: false,
@@ -272,7 +272,7 @@ export class PollService {
       id: '6',
       title: "Summer Team Location & Activities",
       category: "Team Activities",
-      endsOn: "07.09.6",
+      endsOn: "07.09.2026",
       badge: "Ends in 4 Days",
       status: "Published",
       isEndingSoon: false,
@@ -306,7 +306,7 @@ export class PollService {
       id: '7',
       title: "AI Tools in Daily Work & Study",
       category: "Education & Learning",
-      endsOn: "08.09.",
+      endsOn: "08.09.2026",
       badge: "Ends in 5 Days",
       status: "Published",
       isEndingSoon: false,
@@ -391,16 +391,78 @@ export class PollService {
     return this.polls.find(p => p.id === id);
   }
 
-  markPollAsPast(pollId: string): void {
-    const poll = this.polls.find(p => p.id === pollId);
-    if (poll) {
-      poll.status = 'Past';
-      poll.badge = 'Ended';
-      poll.isEndingSoon = false;
+  isDateInPast(dateStr: string): boolean {
+    if (!dateStr || dateStr.trim() === '') return false;
+
+    let year: number, month: number, day: number;
+
+    if (dateStr.includes('.')) {
+      const parts = dateStr.split('.');
+      if (parts.length < 3) return false;
+      day = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10) - 1;
+      year = parseInt(parts[2], 10);
+      if (year < 100) year += 2000;
+    } else if (dateStr.includes('-')) {
+      const parts = dateStr.split('-');
+      if (parts.length < 3) return false;
+      year = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10) - 1;
+      day = parseInt(parts[2], 10);
+    } else {
+      return false;
     }
+
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return false;
+
+    const pollEndDate = new Date(year, month, day, 23, 59, 59);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return pollEndDate < today;
+  }
+
+  isPollCompleted(pollId: string): boolean {
+    if (this.completedPollIds.includes(pollId)) return true;
+    try {
+      const stored = localStorage.getItem('completed_polls');
+      if (stored) {
+        const ids: string[] = JSON.parse(stored);
+        if (ids.includes(pollId)) {
+          if (!this.completedPollIds.includes(pollId)) {
+            this.completedPollIds.push(pollId);
+          }
+          return true;
+        }
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  isPollPast(poll: Poll): boolean {
+    if (!poll) return false;
+    if (poll.badge === 'Ended' || poll.status === 'Past') {
+      return true;
+    }
+    if (poll.endsOn && poll.endsOn.trim().length > 0 && this.isDateInPast(poll.endsOn)) {
+      poll.badge = 'Ended';
+      poll.status = 'Past';
+      return true;
+    }
+    return false;
+  }
+
+  markPollAsCompleted(pollId: string): void {
     if (!this.completedPollIds.includes(pollId)) {
       this.completedPollIds.push(pollId);
     }
+    try {
+      localStorage.setItem('completed_polls', JSON.stringify(this.completedPollIds));
+    } catch (e) {}
+  }
+
+  markPollAsPast(pollId: string): void {
+    this.markPollAsCompleted(pollId);
   }
 
   async savePollToSupabase(pollData: {
@@ -416,7 +478,6 @@ export class PollService {
       .single();
 
     if (pollError || !poll) {
-      console.error('Error saving poll:', pollError?.message);
       return null;
     }
 
@@ -425,13 +486,9 @@ export class PollService {
       .map(opt => ({ poll_id: poll.id, option_text: opt }));
 
     if (optionsToInsert.length > 0) {
-      const { error: optError } = await this.supabaseService.client
+      await this.supabaseService.client
         .from('poll_options')
         .insert(optionsToInsert);
-
-      if (optError) {
-        console.error('Error saving poll options:', optError?.message);
-      }
     }
 
     return poll.id;
@@ -443,27 +500,42 @@ export class PollService {
       .select('*');
 
     if (error || !data) {
-      console.error('Error loading polls:', error?.message);
       return [];
     }
 
     return data.map((p: any): Poll => {
       let desc = p.description ?? '';
-      if (desc.includes('|||JSON|||')) {
+      let endsOn = '';
+      if (desc.includes('|||ENDDATE|||')) {
+        const endParts = desc.split('|||ENDDATE|||');
+        desc = endParts[0];
+        const rest = endParts[1];
+        if (rest.includes('|||JSON|||')) {
+          endsOn = rest.split('|||JSON|||')[0];
+        } else {
+          endsOn = rest;
+        }
+      } else if (desc.includes('|||JSON|||')) {
         desc = desc.split('|||JSON|||')[0];
       }
-      const isPast = this.completedPollIds.includes(p.id);
-      return {
+
+      const tempPoll: Poll = {
         id: p.id,
         title: p.title,
         category: p.category ?? 'Allgemein',
-        endsOn: '',
-        badge: isPast ? 'Ended' : 'Neu',
-        status: isPast ? 'Past' : 'Published',
+        endsOn: endsOn,
+        badge: 'Neu',
+        status: 'Published',
         description: desc,
         isEndingSoon: false,
         questions: []
       };
+
+      const isPast = this.isPollPast(tempPoll);
+      tempPoll.status = isPast ? 'Past' : 'Published';
+      tempPoll.badge = isPast ? 'Ended' : 'Neu';
+
+      return tempPoll;
     });
   }
 
@@ -475,27 +547,34 @@ export class PollService {
       .single();
 
     if (pollError || !pollData) {
-      console.error('Error loading poll:', pollError?.message);
       return null;
     }
 
-    const { data: optionsData, error: optionsError } = await this.supabaseService.client
+    const { data: optionsData } = await this.supabaseService.client
       .from('poll_options')
       .select('*')
       .eq('poll_id', id);
 
-    if (optionsError) {
-      console.error('Error loading poll options:', optionsError.message);
-    }
-
-    let description = pollData.description ?? '';
+    let rawDesc = pollData.description ?? '';
+    let description = rawDesc;
+    let endsOn = '';
     let questions: any[] = [];
 
-    if (description.includes('|||JSON|||')) {
-      const parts = description.split('|||JSON|||');
-      description = parts[0];
+    if (rawDesc.includes('|||JSON|||')) {
+      const parts = rawDesc.split('|||JSON|||');
+      const descAndEnd = parts[0];
+      const jsonStr = parts[1];
+
+      if (descAndEnd.includes('|||ENDDATE|||')) {
+        const endParts = descAndEnd.split('|||ENDDATE|||');
+        description = endParts[0];
+        endsOn = endParts[1];
+      } else {
+        description = descAndEnd;
+      }
+
       try {
-        const parsedQuestions = JSON.parse(parts[1]);
+        const parsedQuestions = JSON.parse(jsonStr);
         questions = parsedQuestions.map((q: any) => ({
           id: q.id,
           number: q.id,
@@ -509,8 +588,11 @@ export class PollService {
           }))
         }));
       } catch (e) {
-        console.error('Failed to parse questions JSON', e);
       }
+    } else if (rawDesc.includes('|||ENDDATE|||')) {
+      const endParts = rawDesc.split('|||ENDDATE|||');
+      description = endParts[0];
+      endsOn = endParts[1];
     }
 
     if (questions.length === 0) {
@@ -529,22 +611,29 @@ export class PollService {
       }] : [];
     }
 
-    return {
+    const tempPoll: Poll = {
       id: pollData.id,
       title: pollData.title,
       category: pollData.category ?? 'Allgemein',
-      endsOn: '',
+      endsOn: endsOn,
       badge: 'Neu',
       status: 'Published',
       description: description,
       isEndingSoon: false,
       questions: questions
     };
+
+    const isPast = this.isPollPast(tempPoll);
+    tempPoll.status = isPast ? 'Past' : 'Published';
+    tempPoll.badge = isPast ? 'Ended' : 'Neu';
+
+    return tempPoll;
   }
 
   subscribeToPollDeletions(callback: (deletedPollId: string) => void) {
+    const uniqueChannelName = `polls-deletions-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = this.supabaseService.client
-      .channel('polls-deletions')
+      .channel(uniqueChannelName)
       .on(
         'postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'polls' },

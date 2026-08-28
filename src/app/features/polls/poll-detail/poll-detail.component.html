@@ -29,13 +29,13 @@
 
                 <div class="questions-grid">
                     @for (q of poll.questions; track q.id) {
-                    <div class="question-block" [class.unanswered]="!isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted"
+                    <div class="question-block" [class.unanswered]="!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted"
                         [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
                         <div class="question-header-row">
                             <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
-                            @if (!isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted) {
+                            @if (!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
                             <span class="required-badge">Required</span>
-                            } @else if (isQuestionAnswered(q.id) && poll.status !== 'Past' && !isSubmitted) {
+                            } @else if (isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
                             <span class="answered-badge">✓ Answered</span>
                             }
                         </div>
@@ -48,7 +48,7 @@
 
                         <div class="options-list">
                             @for (opt of q.options; track opt.key) {
-                            <label class="option-item" [class.disabled-option]="poll.status === 'Past' || isSubmitted"
+                            <label class="option-item" [class.disabled-option]="isPollEnded || isSubmitted"
                                 (click)="toggleOption(q.id, opt.key)">
                                 <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
                                     @if (isSelected(q.id, opt.key)) {
@@ -66,18 +66,18 @@
                 </div>
 
                 <div class="survey-card-footer">
-                    @if (!isSubmitted && poll.status !== 'Past') {
+                    @if (!isSubmitted && !isPollEnded) {
                     <div class="validation-progress-info">
                         <span class="progress-text" [class.ready]="areAllQuestionsAnswered">
                             {{ answeredQuestionsCount }} of {{ totalQuestionsCount }} questions answered
                         </span>
                     </div>
                     }
-                    <button class="complete-survey-btn" [class.completed]="isSubmitted"
-                        [disabled]="isSubmitted || poll.status === 'Past' || !areAllQuestionsAnswered" (click)="completeSurvey()">
-                        <span class="btn-text-desktop">{{ (isSubmitted || poll.status === 'Past') ? 'Survey Completed!' : 'Complete survey' }}</span>
+                    <button class="complete-survey-btn" [class.completed]="isSubmitted || isPollEnded"
+                        [disabled]="isSubmitted || isPollEnded || !areAllQuestionsAnswered" (click)="completeSurvey()">
+                        <span class="btn-text-desktop">{{ (isSubmitted || isPollEnded) ? 'Survey Completed!' : 'Complete survey' }}</span>
                         <span class="btn-text-mobile">
-                            {{ (isSubmitted || poll.status === 'Past') ? 'Completed' : 'Complete' }}
+                            {{ (isSubmitted || isPollEnded) ? 'Completed' : 'Complete' }}
                             <img src="icons/check.svg" alt="check icon" class="check-icon">
                         </span>
                     </button>
@@ -135,6 +135,16 @@
             <div class="popup-text">
                 <span class="popup-title">Answers missing!</span>
                 <span class="popup-subtitle">Please answer all questions<br>to complete the survey</span>
+            </div>
+        </div>
+        }
+
+        @if (showAlreadyCompletedPopup) {
+        <div class="publish-popup missing-popup" [class.slide-in]="showAlreadyCompletedPopup">
+            <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeAlreadyCompletedPopup()">
+            <div class="popup-text">
+                <span class="popup-title">Already completed!</span>
+                <span class="popup-subtitle">You have already completed<br>this survey</span>
             </div>
         </div>
         }

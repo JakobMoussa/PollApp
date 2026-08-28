@@ -49,6 +49,7 @@
   justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 40px 20px;
   box-sizing: border-box;
 }
@@ -532,12 +533,13 @@
           gap: 8px;
           align-self: flex-start;
           margin-top: 6px;
-          padding: 0 0 3px 0;
+          padding: 4px 8px;
+          border-radius: 6px;
           border-bottom: 1.5px solid currentColor;
+          transition: background-color 0.2s ease;
 
           &:hover {
             background-color: #7B7785;
-            padding: 2px;
           }
 
           .plus-icon-circle {
@@ -700,7 +702,7 @@
 
 @keyframes slideInFromRight {
   0% {
-    transform: translateX(120%);
+    transform: translateX(100%);
     opacity: 0;
   }
 

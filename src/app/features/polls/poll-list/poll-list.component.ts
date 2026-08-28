@@ -60,9 +60,9 @@ export class PollListComponent implements OnInit, OnDestroy {
     let filtered = this.allGridPolls;
 
     if (this.activeTab === 'active') {
-      filtered = filtered.filter(p => p.status !== 'Past' && p.status !== 'Closed');
+      filtered = filtered.filter(p => !this.pollService.isPollPast(p));
     } else {
-      filtered = filtered.filter(p => p.status === 'Past' || p.status === 'Closed');
+      filtered = filtered.filter(p => this.pollService.isPollPast(p));
     }
 
     if (!this.selectedCategory || this.selectedCategory === 'All Surveys') {
@@ -103,10 +103,12 @@ export class PollListComponent implements OnInit, OnDestroy {
 
   async onSurveyCreated(pollId: string) {
     this.isCreatePopupOpen = false;
+    this.activeTab = 'active';
+    this.selectedCategory = 'All Surveys';
     const supabasePolls = await this.pollService.loadPollsFromSupabase();
     this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
     this.selectedPollId = pollId;
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   openDetailPopup(pollId: string) {

@@ -38,11 +38,12 @@ header img {
 .hero-image {
     max-width: 100%;
     height: auto;
-    transition: transform 0.3s ease;
+    cursor: pointer;
+    transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
 
     &:hover {
         content: url('../../../../../public/icons/phone-img2.png');
-        transform: scale(1.01);
+        transform: scale(1.02);
     }
 }
 
@@ -161,7 +162,7 @@ section.ending-soon button:hover {
 
 section.ending-soon button p.category {
     font-size: 14px;
-    color: #8a8a8a;
+    color: #524a4a;
     margin-bottom: 10px;
 }
 
@@ -203,7 +204,7 @@ nav.filter-row ul {
 
 nav.filter-row li {
     border-radius: 20px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
@@ -494,6 +495,12 @@ footer {
     }
 }
 
+@media (max-width: 1219px) and (min-width: 320px) {
+    header {
+        padding-left: 30px !important;
+    }
+}
+
 @media (max-width: 1024px) {
 
     .ending-soon {
@@ -626,6 +633,12 @@ footer {
     nav.filter-row {
         max-width: 670px;
     }
+
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
+    }
 }
 
 @media (max-width: 699px) and (min-width: 600px) {
@@ -652,6 +665,12 @@ footer {
     section.ending-soon button {
         min-height: 240px;
         padding: 30px 18px 30px 30px;
+    }
+
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
     }
 
     section.grid {
@@ -710,6 +729,12 @@ footer {
         padding: 15px 18px 15px 15px;
     }
 
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
+    }
+
     section.grid {
         max-width: 490px;
     }
@@ -721,7 +746,7 @@ footer {
     section.grid button p.title {
         font-size: 16px;
         margin: 0;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
 
     .hero-right {
@@ -730,6 +755,7 @@ footer {
 
     nav.filter-row button.sort {
         font-size: 16px;
+
     }
 
 }
@@ -742,6 +768,17 @@ footer {
 
     h2 {
         font-size: 22px;
+    }
+
+    .hero-section {
+        flex-direction: column;
+    }
+
+    // .outer-card .inner-form-card.form-top-row .category-wrapper .category-btn 
+
+    .category-btn {
+        justify-content: end;
+        gap: 10px;
     }
 
     section.ending-soon .cards {
@@ -781,6 +818,12 @@ footer {
     .ending-soon {
         max-width: 440px;
     }
+
+    section.grid {
+        grid-template-columns: none;
+        max-height: none;
+        padding: 20px;
+    }
 }
 
 @media (max-width: 425px) {
@@ -817,6 +860,12 @@ footer {
         gap: 40px;
     }
 
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
+    }
+
     section.ending-soon .cards {
         padding: 20px;
     }
@@ -839,6 +888,12 @@ footer {
         min-width: 180px;
         min-height: 200px;
         padding: 15px 18px 15px 15px;
+    }
+
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
     }
 
     footer {
@@ -864,6 +919,12 @@ footer {
         min-width: none;
         min-height: 180px;
         padding: 15px 18px 15px 15px;
+    }
+
+    .outer-card .inner-form-card .form-top-row .category-wrapper .category-btn {
+        justify-content: end;
+        gap: 10px;
+
     }
 
     footer {

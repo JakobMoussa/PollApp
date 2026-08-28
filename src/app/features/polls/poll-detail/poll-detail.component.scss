@@ -48,6 +48,7 @@ main {
   background-color: #ffffff;
   z-index: 1000;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -194,7 +195,7 @@ main {
 
     .required-error-text {
       color: #E53E3E;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
       margin: 2px 0 8px 0;
     }
@@ -488,7 +489,7 @@ main {
 
 @keyframes slideInFromRight {
   0% {
-    transform: translateX(120%);
+    transform: translateX(100%);
     opacity: 0;
   }
 

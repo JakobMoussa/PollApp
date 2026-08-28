@@ -70,7 +70,11 @@ export class PollCreateComponent {
   constructor(private router: Router, private pollService: PollService) { }
 
   onCancel() {
-    this.closePopup.emit();
+    if (this.createdPollId) {
+      this.closePublishPopup();
+    } else {
+      this.closePopup.emit();
+    }
   }
 
   clearSurveyName() {
@@ -194,7 +198,7 @@ export class PollCreateComponent {
 
     const savedId = await this.pollService.savePollToSupabase({
       title: this.surveyName,
-      description: this.description + '|||JSON|||' + JSON.stringify(this.questions),
+      description: this.description + (this.endDate ? '|||ENDDATE|||' + this.endDate : '') + '|||JSON|||' + JSON.stringify(this.questions),
       category: this.category,
       options: allOptions
     });
@@ -202,8 +206,10 @@ export class PollCreateComponent {
     if (savedId) {
       this.createdPollId = savedId;
       this.showPublishPopup = true;
+      setTimeout(() => {
+        this.closePublishPopup();
+      }, 6000);
     } else {
-      console.error('Poll could not be saved to Supabase.');
       this.showPublishPopup = true;
     }
   }
