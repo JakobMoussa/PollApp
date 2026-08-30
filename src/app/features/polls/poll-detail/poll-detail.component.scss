@@ -251,12 +251,18 @@ main {
         &.checked {
           background-color: #FFB770;
           border-color: #FFB770;
+
+          img {
+            opacity: 1;
+            visibility: visible;
+          }
         }
 
         img {
           width: 10px;
           height: auto;
-          display: block;
+          opacity: 0;
+          visibility: hidden;
         }
       }
 

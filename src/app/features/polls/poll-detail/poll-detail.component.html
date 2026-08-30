@@ -53,9 +53,7 @@
                             <label class="option-item" [class.disabled-option]="isPollEnded || isSubmitted"
                                 (click)="toggleOption(q.id, opt.key)">
                                 <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
-                                    @if (isSelected(q.id, opt.key)) {
-                                    <img src="icons/check.svg" alt="ckeck-icon">
-                                    }
+                                    <img src="icons/check.svg" alt="check-icon">
                                 </div>
                                 <span class="option-text">
                                     <strong>{{ opt.key }}.</strong> {{ opt.text }}

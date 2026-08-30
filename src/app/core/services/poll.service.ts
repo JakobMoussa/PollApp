@@ -2,12 +2,20 @@ import { Injectable } from '@angular/core';
 import { Poll } from '../models/poll.model';
 import { SupabaseService } from './supabase.service';
 
+/**
+ * Service responsible for managing polls. Handles local mock data,
+ * Supabase synchronization, state management (completed polls), 
+ * and real-time subscriptions for deleted polls.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class PollService {
   constructor(private supabaseService: SupabaseService) { }
 
+  /**
+   * The local array of mock polls used as fallback or initial data.
+   */
   private polls: Poll[] = [
     {
       id: '1',
@@ -373,24 +381,47 @@ export class PollService {
     }
   ];
 
+  /** Local cache of completed poll IDs. */
   private completedPollIds: string[] = [];
 
+  /**
+   * Retrieves the raw list of mock polls.
+   * @returns {Poll[]} An array of Poll objects.
+   */
   getPolls(): Poll[] {
     return this.polls;
   }
 
+  /**
+   * Retrieves only the polls that are marked as ending soon.
+   * @returns {Poll[]} An array of polls ending soon.
+   */
   getEndingSoonPolls(): Poll[] {
     return this.polls.filter(p => p.isEndingSoon);
   }
 
+  /**
+   * Retrieves the polls used for the main grid view.
+   * @returns {Poll[]} An array of Poll objects.
+   */
   getGridPolls(): Poll[] {
     return this.polls;
   }
 
+  /**
+   * Finds a poll by its unique identifier.
+   * @param {string} id The ID of the poll.
+   * @returns {Poll | undefined} The found Poll or undefined.
+   */
   getPollById(id: string): Poll | undefined {
     return this.polls.find(p => p.id === id);
   }
 
+  /**
+   * Checks if a given date string is in the past compared to today.
+   * @param {string} dateStr The date string (supports DD.MM.YYYY or YYYY-MM-DD).
+   * @returns {boolean} True if the date has passed, false otherwise.
+   */
   isDateInPast(dateStr: string): boolean {
     if (!dateStr || dateStr.trim() === '') return false;
 
@@ -422,6 +453,11 @@ export class PollService {
     return pollEndDate < today;
   }
 
+  /**
+   * Checks if a poll has been completed by the user (checking local memory and localStorage).
+   * @param {string} pollId The ID of the poll to check.
+   * @returns {boolean} True if the user has completed it.
+   */
   isPollCompleted(pollId: string): boolean {
     if (this.completedPollIds.includes(pollId)) return true;
     try {
@@ -439,6 +475,12 @@ export class PollService {
     return false;
   }
 
+  /**
+   * Checks whether a poll is past its end date or explicitly marked as ended.
+   * Updates the poll's badge and status if it is past due.
+   * @param {Poll} poll The poll to evaluate.
+   * @returns {boolean} True if the poll is past.
+   */
   isPollPast(poll: Poll): boolean {
     if (!poll) return false;
     if (poll.badge === 'Ended' || poll.status === 'Past') {
@@ -452,6 +494,10 @@ export class PollService {
     return false;
   }
 
+  /**
+   * Marks a poll as completed by saving its ID to memory and localStorage.
+   * @param {string} pollId The ID of the poll to mark.
+   */
   markPollAsCompleted(pollId: string): void {
     if (!this.completedPollIds.includes(pollId)) {
       this.completedPollIds.push(pollId);
@@ -461,10 +507,19 @@ export class PollService {
     } catch (e) { }
   }
 
+  /**
+   * Alias for marking a poll as past/completed manually.
+   * @param {string} pollId The ID of the poll.
+   */
   markPollAsPast(pollId: string): void {
     this.markPollAsCompleted(pollId);
   }
 
+  /**
+   * Saves a newly created poll to the Supabase database.
+   * @param pollData The payload containing the poll's core details.
+   * @returns {Promise<string | null>} The generated poll ID, or null on failure.
+   */
   async savePollToSupabase(pollData: {
     title: string;
     description: string;
@@ -494,6 +549,11 @@ export class PollService {
     return poll.id;
   }
 
+  /**
+   * Loads all polls from Supabase, parsing their custom JSON description fields
+   * to extract end dates and statuses.
+   * @returns {Promise<Poll[]>} An array of polls fetched from the DB.
+   */
   async loadPollsFromSupabase(): Promise<Poll[]> {
     const { data, error } = await this.supabaseService.client
       .from('polls')
@@ -539,6 +599,12 @@ export class PollService {
     });
   }
 
+  /**
+   * Fetches a single poll by ID from Supabase and deeply parses its JSON structure
+   * to retrieve nested questions and answer options.
+   * @param {string} id The poll ID to fetch.
+   * @returns {Promise<Poll | null>} The parsed Poll object, or null on failure.
+   */
   async getPollByIdFromSupabase(id: string): Promise<Poll | null> {
     const { data: pollData, error: pollError } = await this.supabaseService.client
       .from('polls')
@@ -630,6 +696,11 @@ export class PollService {
     return tempPoll;
   }
 
+  /**
+   * Subscribes to real-time deletion events for polls in the Supabase database.
+   * @param callback A function to execute when a poll is deleted, passing the deleted poll ID.
+   * @returns The active real-time channel subscription.
+   */
   subscribeToPollDeletions(callback: (deletedPollId: string) => void) {
     const uniqueChannelName = `polls-deletions-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = this.supabaseService.client
@@ -647,6 +718,10 @@ export class PollService {
     return channel;
   }
 
+  /**
+   * Removes and unsubscribes from a given Supabase real-time channel.
+   * @param channel The channel to unsubscribe from.
+   */
   unsubscribeFromChannel(channel: any) {
     if (channel) {
       this.supabaseService.client.removeChannel(channel);
