@@ -13,8 +13,8 @@ export class PollService {
       id: '1',
       title: "Let's Plan the Next Team Event Together",
       category: "Team Activities",
-      endsOn: "29.08.2026",
-      badge: "Ends in 1 Day",
+      endsOn: "01.09.2026",
+      badge: "Ends in 2 Day",
       status: "Published",
       isEndingSoon: true,
       description: "We want to create team activities that everyone will enjoy – share your preferences and ideas in our survey to help us plan better experiences together.",
@@ -435,7 +435,7 @@ export class PollService {
           return true;
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return false;
   }
 
@@ -458,7 +458,7 @@ export class PollService {
     }
     try {
       localStorage.setItem('completed_polls', JSON.stringify(this.completedPollIds));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   markPollAsPast(pollId: string): void {

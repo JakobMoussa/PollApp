@@ -19,7 +19,8 @@
                 </div>
 
                 <h1 class="survey-title">
-                    {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{ titleParts.suffix
+                    {{ titleParts.prefix }}@if (titleParts.hasDot) {<span class="orange-dot">•</span>}{{
+                    titleParts.suffix
                     }}
                 </h1>
 
@@ -29,7 +30,8 @@
 
                 <div class="questions-grid">
                     @for (q of poll.questions; track q.id) {
-                    <div class="question-block" [class.unanswered]="!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted"
+                    <div class="question-block"
+                        [class.unanswered]="!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted"
                         [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
                         <div class="question-header-row">
                             <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
@@ -75,7 +77,8 @@
                     }
                     <button class="complete-survey-btn" [class.completed]="isSubmitted || isPollEnded"
                         [disabled]="isSubmitted || isPollEnded || !areAllQuestionsAnswered" (click)="completeSurvey()">
-                        <span class="btn-text-desktop">{{ (isSubmitted || isPollEnded) ? 'Survey Completed!' : 'Complete survey' }}</span>
+                        <span class="btn-text-desktop">{{ (isSubmitted || isPollEnded) ? 'Survey Completed!' : 'Complete
+                            survey' }}</span>
                         <span class="btn-text-mobile">
                             {{ (isSubmitted || isPollEnded) ? 'Completed' : 'Complete' }}
                             <img src="icons/check.svg" alt="check icon" class="check-icon">
@@ -84,7 +87,13 @@
                 </div>
             </section>
 
-            <section class="results-card">
+            <button class="toggle-results-btn" (click)="toggleResultsMobile()">
+                <span>{{ showResultsMobile ? 'Close results' : 'See results' }}</span>
+                <img src="icons/purple_arrow_drop.svg" alt="toggle results" class="toggle-results-icon default-icon" [class.rotated]="showResultsMobile">
+                <img src="icons/drop_down.svg" alt="toggle results hover" class="toggle-results-icon hover-icon" [class.rotated]="showResultsMobile">
+            </button>
+
+            <section class="results-card" [class.results-mobile-hidden]="!showResultsMobile">
                 <h2 class="results-title">
                     Survey results <span class="live-badge">LIVE</span>
                 </h2>
@@ -141,7 +150,8 @@
 
         @if (showAlreadyCompletedPopup) {
         <div class="publish-popup missing-popup" [class.slide-in]="showAlreadyCompletedPopup">
-            <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon" (click)="closeAlreadyCompletedPopup()">
+            <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon"
+                (click)="closeAlreadyCompletedPopup()">
             <div class="popup-text">
                 <span class="popup-title">Already completed!</span>
                 <span class="popup-subtitle">You have already completed<br>this survey</span>

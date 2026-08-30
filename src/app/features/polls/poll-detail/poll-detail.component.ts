@@ -24,6 +24,7 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
   submittedAttempted = false;
   showMissingPopup = false;
   showAlreadyCompletedPopup = false;
+  showResultsMobile = false;
 
   private deleteSubscriptionChannel: any;
 
@@ -291,8 +292,11 @@ export class PollDetailComponent implements OnInit, OnChanges, OnDestroy {
     this.openCreate.emit();
   }
 
+  toggleResultsMobile() {
+    this.showResultsMobile = !this.showResultsMobile;
+  }
+
   closeCompletePopup() {
     this.showCompletePopup = false;
-    this.closeDetail.emit();
   }
 }

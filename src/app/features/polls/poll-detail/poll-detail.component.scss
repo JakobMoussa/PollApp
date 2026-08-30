@@ -401,14 +401,12 @@ main {
 }
 
 /* ========================================= */
-/* Media Queries for Responsive Design       */
+/* Mobile Results Toggle                     */
 /* ========================================= */
 
-@media (max-width: 1250px) {}
-
-@media (max-width: 1024px) {}
-
-@media (max-width: 768px) {}
+.toggle-results-btn {
+  display: none;
+}
 
 @media (max-width: 500px) {
   .poll-detail-container {
@@ -418,6 +416,48 @@ main {
 
 @media (max-width: 425px) {
   .header .create-survey-btn {
+    display: none;
+  }
+
+  .toggle-results-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Mulish', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #35273A;
+    padding: 0;
+    margin: 20px 0 4px 0;
+
+    .toggle-results-icon {
+      width: 15px;
+      height: 8px;
+      transform: rotate(0deg);
+      transition: transform 0.83s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+
+    .hover-icon {
+      display: none;
+    }
+
+    &:hover .default-icon {
+      display: none;
+    }
+
+    &:hover .hover-icon {
+      display: inline-block;
+    }
+  }
+
+  .results-card.results-mobile-hidden {
     display: none;
   }
 
