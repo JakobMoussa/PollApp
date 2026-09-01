@@ -3,7 +3,10 @@
         <a (click)="closeModal()" class="logo-link" style="cursor: pointer;">
             <img src="icons/pollapp-logo-dark.svg" alt="Poll App Logo" class="logo-img">
         </a>
-        <button class="create-survey-btn" (click)="openCreateFromHeader()">Create survey</button>
+        <button class="create-survey-btn" (click)="openCreateFromHeader()">
+            <span>Create survey</span>
+            <img src="icons/add_circle_purple.svg" alt="" class="survey-icon">
+        </button>
     </header>
 
     <main class="poll-detail-container">
@@ -31,20 +34,20 @@
                 <div class="questions-grid">
                     @for (q of poll.questions; track q.id) {
                     <div class="question-block"
-                        [class.unanswered]="!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted"
-                        [class.has-error]="submittedAttempted && !isQuestionAnswered(q.id)">
+                        [class.unanswered]="!votingService.isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted"
+                        [class.has-error]="submittedAttempted && !votingService.isQuestionAnswered(q.id)">
                         <div class="question-header-row">
                             <h3 class="question-title">{{ q.number }}. {{ q.text }}</h3>
-                            @if (!isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
+                            @if (!votingService.isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
                             <span class="required-badge">Required</span>
-                            } @else if (isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
+                            } @else if (votingService.isQuestionAnswered(q.id) && !isPollEnded && !isSubmitted) {
                             <span class="answered-badge">✓ Answered</span>
                             }
                         </div>
                         @if (q.subtitle) {
                         <p class="question-subtitle">{{ q.subtitle }}</p>
                         }
-                        @if (submittedAttempted && !isQuestionAnswered(q.id)) {
+                        @if (submittedAttempted && !votingService.isQuestionAnswered(q.id)) {
                         <p class="required-error-text">Please answer this question</p>
                         }
 
@@ -52,7 +55,7 @@
                             @for (opt of q.options; track opt.key) {
                             <label class="option-item" [class.disabled-option]="isPollEnded || isSubmitted"
                                 (click)="toggleOption(q.id, opt.key)">
-                                <div class="checkbox-box" [class.checked]="isSelected(q.id, opt.key)">
+                                <div class="checkbox-box" [class.checked]="votingService.isSelected(q.id, opt.key)">
                                     <img src="icons/check.svg" alt="check-icon">
                                 </div>
                                 <span class="option-text">
@@ -68,13 +71,13 @@
                 <div class="survey-card-footer">
                     @if (!isSubmitted && !isPollEnded) {
                     <div class="validation-progress-info">
-                        <span class="progress-text" [class.ready]="areAllQuestionsAnswered">
-                            {{ answeredQuestionsCount }} of {{ totalQuestionsCount }} questions answered
+                        <span class="progress-text" [class.ready]="votingService.areAllQuestionsAnswered">
+                            {{ votingService.answeredQuestionsCount }} of {{ votingService.totalQuestionsCount }} questions answered
                         </span>
                     </div>
                     }
                     <button class="complete-survey-btn" [class.completed]="isSubmitted || isPollEnded"
-                        [disabled]="isSubmitted || isPollEnded || !areAllQuestionsAnswered" (click)="completeSurvey()">
+                        [disabled]="isSubmitted || isPollEnded || !votingService.areAllQuestionsAnswered" (click)="completeSurvey()">
                         <span class="btn-text-desktop">{{ (isSubmitted || isPollEnded) ? 'Survey Completed!' : 'Complete
                             survey' }}</span>
                         <span class="btn-text-mobile">
@@ -87,8 +90,10 @@
 
             <button class="toggle-results-btn" (click)="toggleResultsMobile()">
                 <span>{{ showResultsMobile ? 'Close results' : 'See results' }}</span>
-                <img src="icons/purple_arrow_drop.svg" alt="toggle results" class="toggle-results-icon default-icon" [class.rotated]="showResultsMobile">
-                <img src="icons/drop_down.svg" alt="toggle results hover" class="toggle-results-icon hover-icon" [class.rotated]="showResultsMobile">
+                <img src="icons/purple_arrow_drop.svg" alt="toggle results" class="toggle-results-icon default-icon"
+                    [class.rotated]="showResultsMobile">
+                <img src="icons/drop_down.svg" alt="toggle results hover" class="toggle-results-icon hover-icon"
+                    [class.rotated]="showResultsMobile">
             </button>
 
             <section class="results-card" [class.results-mobile-hidden]="!showResultsMobile">
@@ -151,7 +156,6 @@
             <img src="icons/close_btn_dark.svg" alt="close-icon" class="close-icon"
                 (click)="closeAlreadyCompletedPopup()">
             <div class="popup-text">
-                <span class="popup-title">Already completed!</span>
                 <span class="popup-subtitle">You have already completed<br>this survey</span>
             </div>
         </div>

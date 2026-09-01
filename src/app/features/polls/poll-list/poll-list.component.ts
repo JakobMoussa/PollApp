@@ -63,7 +63,7 @@ export class PollListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.deleteSubscriptionChannel) {
-      this.pollService.unsubscribeFromChannel(this.deleteSubscriptionChannel);
+      this.pollService.api.unsubscribeFromChannel(this.deleteSubscriptionChannel);
     }
   }
 
@@ -72,9 +72,9 @@ export class PollListComponent implements OnInit, OnDestroy {
    * the local service state and the Supabase backend.
    */
   private async loadInitialData(): Promise<void> {
-    this.endingSoonPolls = this.pollService.getEndingSoonPolls();
-    const supabasePolls = await this.pollService.loadPollsFromSupabase();
-    this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
+    this.endingSoonPolls = this.pollService.state.getEndingSoonPolls();
+    const supabasePolls = await this.pollService.api.loadPollsFromSupabase();
+    this.allGridPolls = [...supabasePolls, ...this.pollService.state.getGridPolls()];
     this.cdr.markForCheck();
   }
 
@@ -83,7 +83,7 @@ export class PollListComponent implements OnInit, OnDestroy {
    * immediately when they are deleted on the server.
    */
   private subscribeToDeletions(): void {
-    this.deleteSubscriptionChannel = this.pollService.subscribeToPollDeletions((deletedId) => {
+    this.deleteSubscriptionChannel = this.pollService.api.subscribeToPollDeletions((deletedId) => {
       this.allGridPolls = this.allGridPolls.filter(p => p.id !== deletedId);
       this.endingSoonPolls = this.endingSoonPolls.filter(p => p.id !== deletedId);
       this.cdr.detectChanges();
@@ -104,7 +104,7 @@ export class PollListComponent implements OnInit, OnDestroy {
    */
   private filterByTab(polls: Poll[]): Poll[] {
     const isPast = this.activeTab === 'inactive';
-    return polls.filter(p => this.pollService.isPollPast(p) === isPast);
+    return polls.filter(p => this.pollService.state.isPollPast(p) === isPast);
   }
 
   /**
@@ -179,8 +179,8 @@ export class PollListComponent implements OnInit, OnDestroy {
     this.isCreatePopupOpen = false;
     this.activeTab = 'active';
     this.selectedCategory = 'All Surveys';
-    const supabasePolls = await this.pollService.loadPollsFromSupabase();
-    this.allGridPolls = [...supabasePolls, ...this.pollService.getGridPolls()];
+    const supabasePolls = await this.pollService.api.loadPollsFromSupabase();
+    this.allGridPolls = [...supabasePolls, ...this.pollService.state.getGridPolls()];
     this.selectedPollId = pollId;
     this.cdr.detectChanges();
   }

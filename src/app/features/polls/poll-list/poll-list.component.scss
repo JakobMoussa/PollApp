@@ -273,11 +273,12 @@ nav.filter-row button.sort {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
+    left: 0;
     background-color: #ffffff;
-    border-radius: 14px;
+    border-radius: 5px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    padding: 8px 0;
-    min-width: 206px;
+    padding: 4px 0;
+    min-width: 187px;
     z-index: 100;
     animation: dropdownFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -287,28 +288,10 @@ nav.filter-row button.sort {
         padding: 0;
         display: flex;
         flex-direction: column;
-        max-height: 220px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: var(--primary-orange) rgba(255, 255, 255, 0.1);
-
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: var(--primary-orange);
-            border-radius: 10px;
-        }
     }
 
     li {
-        padding: 12px 20px;
+        padding: 5px 8px;
         font-family: 'mulish', sans-serif;
         font-size: 15px;
         font-weight: 600;
@@ -867,8 +850,8 @@ footer {
 
     .hero-right {
         justify-content: center;
+        margin-top: 20px;
     }
-
 
     h1 {
         font-size: 62px;

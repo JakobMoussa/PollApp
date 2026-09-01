@@ -281,7 +281,7 @@ export class PollCreateComponent {
     const payload = JSON.stringify(this.questions);
     const dateStr = this.endDate ? '|||ENDDATE|||' + this.endDate : '';
     
-    return this.pollService.savePollToSupabase({
+    return this.pollService.api.savePollToSupabase({
       title: this.surveyName,
       description: this.description + dateStr + '|||JSON|||' + payload,
       category: this.category,

@@ -331,9 +331,9 @@
           top: calc(100% + 6px);
           left: 0;
           right: 0;
-          min-width: 190px;
+          min-width: 187px;
           background-color: #ffffff;
-          border-radius: 14px;
+          border-radius: 5px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
           padding: 8px 0;
           z-index: 100;
@@ -348,7 +348,7 @@
           }
 
           li {
-            padding: 7px 13px;
+            padding: 5px 8px;
             font-family: 'Mulish', sans-serif;
             font-size: 14px;
             font-weight: 600;
@@ -778,6 +778,26 @@
       box-sizing: border-box;
       border-radius: 0 100px 0 0;
       padding: 24px 9px;
+    }
+  }
+}
+
+@media (max-width: 424px) and (min-width: 320px) {
+  .publish-popup {
+    width: 280px;
+    height: 60px;
+
+    .close-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .popup-text {
+      font-size: 18px !important;
+
+      .popup-subtitle {
+        font-size: 16px !important
+      }
     }
   }
 }

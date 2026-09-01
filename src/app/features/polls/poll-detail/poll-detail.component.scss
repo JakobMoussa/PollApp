@@ -22,19 +22,48 @@ main {
   }
 
   .create-survey-btn {
-    background-color: #FFCFA1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: #35273A;
-    font-weight: 700;
-    font-size: 16px;
-    padding: 12px 28px;
+    background-color: #FFCFA1;
+    padding: 12px 16px;
     border-radius: 12px;
+    font-size: 16px;
     border: none;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    gap: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: background-color 0.3s ease, gap 0.3s ease, padding-right 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+
+    .survey-icon {
+      width: 0px;
+      height: 20px;
+      opacity: 0;
+      object-fit: contain;
+      transform: scale(0.4) rotate(-90deg);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
 
     &:hover {
       background-color: #FEB770;
-      transform: translateY(-1px);
+      gap: 8px;
+      padding-right: 18px;
+
+      .survey-icon {
+        width: 20px;
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+    }
+
+    &:active {
+      transform: scale(0.98);
     }
   }
 }
@@ -231,8 +260,12 @@ main {
       user-select: none;
       line-height: 1.4;
 
-      &:hover .checkbox-box {
+      &:not(.disabled-option):hover .checkbox-box {
         border-color: #E88635;
+      }
+
+      &.disabled-option {
+        cursor: default;
       }
 
       .checkbox-box {
@@ -493,8 +526,8 @@ main {
 
 .publish-popup {
   position: fixed;
-  bottom: 40px;
-  right: 48px;
+  bottom: 60px;
+  right: 60px;
   width: 357px;
   height: 86px;
   background-color: var(--secondary-orange, #FFCFA1);
@@ -507,6 +540,19 @@ main {
   z-index: 1000;
   animation: slideInFromRight 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    right: 50%;
+    transform: translateX(50%);
+    animation: slideUpFromBottom 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+  
+  @media (max-width: 480px) {
+    width: calc(100vw - 40px);
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 40px;
+  }
 
   .close-icon {
     position: absolute;
@@ -546,6 +592,23 @@ main {
 
   100% {
     transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpFromBottom {
+  0% {
+    transform: translate(50%, 100%);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translate(50%, -8px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(50%, 0);
     opacity: 1;
   }
 }
