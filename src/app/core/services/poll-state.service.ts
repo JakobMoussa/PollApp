@@ -12,7 +12,7 @@ import { MOCK_POLLS } from '../data/mock-polls.data';
 export class PollStateService {
   /** The local array of mock polls used as fallback or initial data. */
   private polls: Poll[] = MOCK_POLLS;
-  
+
   /** Local cache of completed poll IDs. */
   private completedPollIds: string[] = [];
 
@@ -38,29 +38,34 @@ export class PollStateService {
    * @returns True if the date has passed, false otherwise.
    */
   isDateInPast(dateStr: string): boolean {
-    if (!dateStr || dateStr.trim() === '') return false;
-    let year: number, month: number, day: number;
-    if (dateStr.includes('.')) {
-      const parts = dateStr.split('.');
-      if (parts.length < 3) return false;
-      day = parseInt(parts[0], 10);
-      month = parseInt(parts[1], 10) - 1;
-      year = parseInt(parts[2], 10);
-      if (year < 100) year += 2000;
-    } else if (dateStr.includes('-')) {
-      const parts = dateStr.split('-');
-      if (parts.length < 3) return false;
-      year = parseInt(parts[0], 10);
-      month = parseInt(parts[1], 10) - 1;
-      day = parseInt(parts[2], 10);
-    } else {
-      return false;
-    }
-    if (isNaN(year) || isNaN(month) || isNaN(day)) return false;
-    const pollEndDate = new Date(year, month, day, 23, 59, 59);
+    const pollEndDate = this.parseDateString(dateStr);
+    if (!pollEndDate) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return pollEndDate < today;
+  }
+
+  /**
+   * Parses a date string into a Date object.
+   * @param dateStr The date string (supports DD.MM.YYYY or YYYY-MM-DD).
+   * @returns A Date object set to 23:59:59 or null if invalid.
+   */
+  private parseDateString(dateStr: string): Date | null {
+    if (!dateStr || !dateStr.trim()) return null;
+    let y: number, m: number, d: number;
+    if (dateStr.includes('.')) {
+      const p = dateStr.split('.');
+      if (p.length < 3) return null;
+      [d, m, y] = [parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)];
+      if (y < 100) y += 2000;
+    } else if (dateStr.includes('-')) {
+      const p = dateStr.split('-');
+      if (p.length < 3) return null;
+      [y, m, d] = [parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10)];
+    } else return null;
+    
+    if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+    return new Date(y, m, d, 23, 59, 59);
   }
 
   /**
