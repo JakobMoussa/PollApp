@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PollService } from '../../../core/services/poll.service';
 import { Poll } from '../../../core/models/poll.model';
-import { PollVotingService } from './poll-voting.service';
+import { PollVotingService } from '../../../core/services/poll-voting.service';
 
 /**
  * Component for displaying the details of a poll, allowing users to vote,

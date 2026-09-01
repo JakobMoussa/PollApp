@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Poll, Question } from '../../../core/models/poll.model';
+import { Poll, Question } from '../models/poll.model';
 
 /**
  * Service to manage the voting state and percentage calculations for a specific poll.
